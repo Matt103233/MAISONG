@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Music, BookOpen, Layers, FileText, Home } from "lucide-react";
+import { Music, BookOpen, Layers, FileText, Home, Folder } from "lucide-react";
 import LyricChat from "@/components/studio/LyricChat";
 import SunoBuilder from "@/components/studio/SunoBuilder";
 import StyleLibrary from "@/components/studio/StyleLibrary";
@@ -46,11 +46,23 @@ export default function Studio() {
             </button>
           ))}
         </nav>
-        <Link to="/">
-          <button className="text-white/40 hover:text-white/70 transition-colors">
-            <Home className="w-4 h-4" />
-          </button>
-        </Link>
+        <div className="flex items-center gap-1">
+          <Link to="/warehouse">
+            <button className="flex items-center gap-1 text-white/40 hover:text-amber-300 transition-colors text-xs px-2 py-1.5 rounded-lg hover:bg-amber-500/10">
+              <Folder className="w-3.5 h-3.5" /><span className="hidden sm:block">Warehouse</span>
+            </button>
+          </Link>
+          <Link to="/scripture">
+            <button className="flex items-center gap-1 text-white/40 hover:text-amber-300 transition-colors text-xs px-2 py-1.5 rounded-lg hover:bg-amber-500/10">
+              <BookOpen className="w-3.5 h-3.5" /><span className="hidden sm:block">Scripture</span>
+            </button>
+          </Link>
+          <Link to="/">
+            <button className="text-white/40 hover:text-white/70 transition-colors p-1.5">
+              <Home className="w-4 h-4" />
+            </button>
+          </Link>
+        </div>
       </header>
 
       {/* Content */}

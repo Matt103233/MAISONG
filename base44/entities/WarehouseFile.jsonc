@@ -1,0 +1,73 @@
+{
+  "name": "WarehouseFile",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Journals & Reflections",
+        "Prayers & Devotionals",
+        "Songs & Poetry",
+        "Grief & Loss",
+        "Recovery & 12 Steps",
+        "Testimony & Life Story",
+        "Faith & Scripture",
+        "Sermons & Speeches",
+        "Letters",
+        "Family & Relationships",
+        "Church & Ministry",
+        "Misc"
+      ]
+    },
+    "subcategory": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "file_url": {
+      "type": "string"
+    },
+    "file_name": {
+      "type": "string"
+    },
+    "themes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "matched_scriptures": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "reviewed",
+        "used",
+        "archived"
+      ],
+      "default": "new"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "title",
+    "category"
+  ]
+}

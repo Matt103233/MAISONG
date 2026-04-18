@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Music, Sparkles, BookOpen, Mic2, Download, Crown, Zap, Star, Check } from "lucide-react";
+import { Music, Sparkles, BookOpen, Mic2, Download, Crown, Zap, Star, Check, Folder } from "lucide-react";
 
 const features = [
-  { icon: Sparkles, title: "AI Lyric Studio", desc: "Chat-based AI that turns your raw ideas into polished song lyrics" },
-  { icon: BookOpen, title: "Bible + Journal References", desc: "Upload your journals, notes, and draw from scripture themes" },
+  { icon: Sparkles, title: "AI Lyric Studio", desc: "Chat-based AI that turns your raw ideas, journals, and faith into polished song lyrics" },
+  { icon: Folder, title: "The Warehouse", desc: "Upload your personal journals, prayers, sermons, poems — auto-categorized and scripture-matched" },
+  { icon: BookOpen, title: "Scripture Finder", desc: "80+ KJV/ESV/NASB verses organized by theme — grief, redemption, recovery, praise, identity" },
   { icon: Music, title: "Suno Prompt Builder", desc: "Auto-generates ready-to-paste prompts for Suno AI music generation" },
-  { icon: Mic2, title: "Style Library", desc: "Curated library of genres, moods, structures, and instrument prompts" },
-  { icon: Zap, title: "Web Search Inspiration", desc: "Pull current references, news, and cultural context into your lyrics" },
-  { icon: Star, title: "My Songs Vault", desc: "Save, organize, and export all your created songs" },
+  { icon: Mic2, title: "Style Library", desc: "Your personal voice library — 12 Harrison Productions signature styles" },
+  { icon: Star, title: "My Songs Vault", desc: "Full song management with lyrics, Suno prompts, backstories, and production notes" },
 ];
 
 const pricingTiers = [
@@ -77,13 +77,16 @@ export default function Landing() {
           </div>
           <span className="font-bold text-lg tracking-tight">SongForge AI</span>
         </div>
-        <div className="flex gap-3">
-          <Link to="/studio">
-            <Button variant="ghost" className="text-white/70 hover:text-white">Studio</Button>
+        <div className="flex gap-2">
+          <Link to="/warehouse">
+            <Button variant="ghost" className="text-white/60 hover:text-white text-sm">Warehouse</Button>
+          </Link>
+          <Link to="/scripture">
+            <Button variant="ghost" className="text-white/60 hover:text-white text-sm">Scripture</Button>
           </Link>
           <Link to="/studio">
             <Button className="bg-gradient-to-r from-purple-600 to-amber-500 hover:from-purple-700 hover:to-amber-600 text-white border-0">
-              Get Started
+              Open Studio
             </Button>
           </Link>
         </div>

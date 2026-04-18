@@ -1,0 +1,32 @@
+{
+  "name": "ScriptureVerse",
+  "type": "object",
+  "properties": {
+    "ref": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "esv": {
+      "type": "string"
+    },
+    "nasb": {
+      "type": "string"
+    },
+    "themes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "is_favorite": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "ref",
+    "text"
+  ]
+}

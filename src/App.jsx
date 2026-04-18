@@ -8,6 +8,8 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 // Add page imports here
 import Landing from "./pages/Landing";
 import Studio from "./pages/Studio";
+import Warehouse from "./pages/Warehouse";
+import ScriptureFinder from "./pages/ScriptureFinder";
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -37,6 +39,8 @@ const AuthenticatedApp = () => {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/studio" element={<Studio />} />
+      <Route path="/warehouse" element={<Warehouse />} />
+      <Route path="/scripture" element={<ScriptureFinder />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
