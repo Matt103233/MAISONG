@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Search, Sparkles, Copy, Star, ArrowLeft, Music } from "lucide-react";
+import { BookOpen, Search, Sparkles, Copy, Star, ArrowLeft, Music, X } from "lucide-react";
 import { toast } from "sonner";
 import { findMatchingScriptures, SCRIPTURE_DATABASE } from "@/lib/scriptureData";
 
