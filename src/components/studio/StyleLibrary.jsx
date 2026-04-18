@@ -3,24 +3,9 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Star, Plus, Copy, Search, Trash2 } from "lucide-react";
+import { Star, Plus, Copy, Search, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import AddStyleDialog from "./AddStyleDialog";
-
-const DEFAULT_PROMPTS = [
-  { name: "Soulful Gospel", category: "genre", prompt_text: "gospel choir, organ, piano, soulful vocals, uplifting, warm reverb, spiritual, powerful, rich harmonies", is_favorite: true },
-  { name: "Intimate Worship", category: "mood", prompt_text: "acoustic guitar, soft piano, intimate, contemplative, whispered vocals, reverb, minimal production, sincere", is_favorite: false },
-  { name: "Hip-Hop Testimony", category: "genre", prompt_text: "hip-hop, trap beats, spoken word, raw lyrics, 808 bass, authentic, street gospel, lo-fi textures", is_favorite: false },
-  { name: "Triumphant Anthem", category: "mood", prompt_text: "epic orchestral, soaring vocals, choir, cinematic, powerful drums, key changes, building energy, triumphant", is_favorite: true },
-  { name: "Psalm 23 Vibes", category: "bible_theme", prompt_text: "peaceful, flowing, shepherd imagery, gentle acoustic, soft strings, serene, meditative, folk gospel", is_favorite: false },
-  { name: "Broken & Restored", category: "theme", prompt_text: "emotional ballad, piano-led, vulnerable vocals, crescendo, raw honesty, redemption arc, strings swell", is_favorite: false },
-  { name: "Verse-Chorus-Bridge", category: "structure", prompt_text: "[Verse 1] setup [Chorus] hook/release [Verse 2] deepen [Chorus] [Bridge] twist/revelation [Final Chorus] elevated", is_favorite: false },
-  { name: "Blues Soul", category: "genre", prompt_text: "blues guitar, Hammond organ, smoky vocals, 12-bar blues, gritty, authentic, vintage recording, emotional depth", is_favorite: false },
-  { name: "R&B Love Song", category: "genre", prompt_text: "smooth R&B, falsetto, lush chords, melodic bass, 90s neo-soul influence, intimate, warm production", is_favorite: false },
-  { name: "Country Storytelling", category: "genre", prompt_text: "acoustic guitar, fiddle, storytelling lyrics, conversational tone, Southern, twang, heartfelt, pedal steel", is_favorite: false },
-  { name: "Revelation Imagery", category: "bible_theme", prompt_text: "apocalyptic, dramatic, powerful choir, thunder, majestic, cinematic, prophetic, intense, orchestral swells", is_favorite: false },
-  { name: "Prodigal Son Theme", category: "bible_theme", prompt_text: "redemption, coming home, emotional, warm, welcoming, folk-pop, storytelling, forgiveness, tearful joy", is_favorite: false },
-];
 
 const CATEGORY_COLORS = {
   genre: "bg-purple-500/20 text-purple-300 border-purple-500/30",
@@ -35,13 +20,25 @@ const CATEGORY_COLORS = {
 const CATEGORY_FILTERS = ["all", "genre", "mood", "bible_theme", "theme", "structure", "instrument", "custom"];
 
 export default function StyleLibrary() {
-  const [prompts, setPrompts] = useState(DEFAULT_PROMPTS);
+  const [prompts, setPrompts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [showAdd, setShowAdd] = useState(false);
 
+  useEffect(() => {
+    loadPrompts();
+  }, []);
+
+  const loadPrompts = async () => {
+    setLoading(true);
+    const data = await base44.entities.StylePrompt.list("-is_favorite", 100);
+    setPrompts(data);
+    setLoading(false);
+  };
+
   const filtered = prompts.filter((p) => {
-    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.prompt_text.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = p.name?.toLowerCase().includes(search.toLowerCase()) || p.prompt_text?.toLowerCase().includes(search.toLowerCase());
     const matchFilter = filter === "all" || p.category === filter;
     return matchSearch && matchFilter;
   });
@@ -51,12 +48,15 @@ export default function StyleLibrary() {
     toast.success("Prompt copied!");
   };
 
-  const toggleFavorite = (idx) => {
-    setPrompts((prev) => prev.map((p, i) => i === idx ? { ...p, is_favorite: !p.is_favorite } : p));
+  const toggleFavorite = async (prompt) => {
+    const updated = { is_favorite: !prompt.is_favorite };
+    await base44.entities.StylePrompt.update(prompt.id, updated);
+    setPrompts((prev) => prev.map((p) => p.id === prompt.id ? { ...p, ...updated } : p));
   };
 
-  const addPrompt = (newPrompt) => {
-    setPrompts((prev) => [...prev, { ...newPrompt, is_favorite: false }]);
+  const addPrompt = async (newPrompt) => {
+    const created = await base44.entities.StylePrompt.create({ ...newPrompt, is_favorite: false });
+    setPrompts((prev) => [...prev, created]);
     setShowAdd(false);
     toast.success("Style added!");
   };
@@ -67,7 +67,7 @@ export default function StyleLibrary() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-2xl font-bold mb-1">Style Library</h2>
-            <p className="text-white/50 text-sm">Copy & remix curated prompts for Suno</p>
+            <p className="text-white/50 text-sm">Your personal Suno prompt library — from your own Harrison Productions voice</p>
           </div>
           <Button onClick={() => setShowAdd(true)} className="bg-purple-600 hover:bg-purple-700 border-0">
             <Plus className="w-4 h-4 mr-1" /> Add Style
@@ -78,22 +78,12 @@ export default function StyleLibrary() {
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search styles..."
-              className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-white/30"
-            />
+            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search styles..." className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-white/30" />
           </div>
           <div className="flex gap-2 flex-wrap">
             {CATEGORY_FILTERS.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setFilter(cat)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all capitalize ${
-                  filter === cat ? "bg-purple-600/30 border-purple-500/50 text-purple-300" : "border-white/10 text-white/40 hover:border-white/20"
-                }`}
-              >
+              <button key={cat} onClick={() => setFilter(cat)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all capitalize ${filter === cat ? "bg-purple-600/30 border-purple-500/50 text-purple-300" : "border-white/10 text-white/40 hover:border-white/20"}`}>
                 {cat.replace("_", " ")}
               </button>
             ))}
@@ -101,32 +91,37 @@ export default function StyleLibrary() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.map((prompt, idx) => (
-            <div key={idx} className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-white/20 transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <h3 className="font-semibold text-sm mb-1">{prompt.name}</h3>
-                  <Badge className={`text-xs border ${CATEGORY_COLORS[prompt.category] || CATEGORY_COLORS.custom}`}>
-                    {prompt.category?.replace("_", " ")}
-                  </Badge>
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="w-6 h-6 animate-spin text-white/30" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {filtered.map((prompt) => (
+              <div key={prompt.id} className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-white/20 transition-all group">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="font-semibold text-sm mb-1">{prompt.name}</h3>
+                    <Badge className={`text-xs border ${CATEGORY_COLORS[prompt.category] || CATEGORY_COLORS.custom}`}>
+                      {prompt.category?.replace("_", " ")}
+                    </Badge>
+                  </div>
+                  <button onClick={() => toggleFavorite(prompt)} className="transition-colors flex-shrink-0 ml-2">
+                    <Star className={`w-4 h-4 ${prompt.is_favorite ? "fill-amber-400 text-amber-400" : "text-white/20 hover:text-amber-400"}`} />
+                  </button>
                 </div>
-                <button onClick={() => toggleFavorite(idx)} className="transition-colors">
-                  <Star className={`w-4 h-4 ${prompt.is_favorite ? "fill-amber-400 text-amber-400" : "text-white/20 hover:text-amber-400"}`} />
-                </button>
+                {prompt.description && (
+                  <p className="text-white/40 text-xs mb-2 italic">{prompt.description}</p>
+                )}
+                <p className="text-white/50 text-xs leading-relaxed mb-4 line-clamp-3">{prompt.prompt_text}</p>
+                <Button size="sm" variant="ghost" onClick={() => copyPrompt(prompt.prompt_text)}
+                  className="w-full text-white/40 hover:text-white hover:bg-white/10 h-8 text-xs">
+                  <Copy className="w-3 h-3 mr-1" /> Copy Prompt
+                </Button>
               </div>
-              <p className="text-white/50 text-xs leading-relaxed mb-4 line-clamp-3">{prompt.prompt_text}</p>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => copyPrompt(prompt.prompt_text)}
-                className="w-full text-white/40 hover:text-white hover:bg-white/10 h-8 text-xs"
-              >
-                <Copy className="w-3 h-3 mr-1" /> Copy Prompt
-              </Button>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {showAdd && <AddStyleDialog onAdd={addPrompt} onClose={() => setShowAdd(false)} />}
       </div>

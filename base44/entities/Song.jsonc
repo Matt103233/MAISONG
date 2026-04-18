@@ -5,6 +5,15 @@
     "title": {
       "type": "string"
     },
+    "album": {
+      "type": "string"
+    },
+    "track_number": {
+      "type": "number"
+    },
+    "theme": {
+      "type": "string"
+    },
     "lyrics": {
       "type": "string"
     },
@@ -17,8 +26,20 @@
     "mood": {
       "type": "string"
     },
-    "theme": {
+    "hook_line": {
       "type": "string"
+    },
+    "backstory": {
+      "type": "string"
+    },
+    "production_notes": {
+      "type": "string"
+    },
+    "scripture_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "notes": {
       "type": "string"
@@ -28,7 +49,8 @@
       "enum": [
         "draft",
         "complete",
-        "exported"
+        "exported",
+        "published"
       ],
       "default": "draft"
     },
