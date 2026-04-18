@@ -1,0 +1,45 @@
+{
+  "name": "Song",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "lyrics": {
+      "type": "string"
+    },
+    "suno_prompt": {
+      "type": "string"
+    },
+    "style": {
+      "type": "string"
+    },
+    "mood": {
+      "type": "string"
+    },
+    "theme": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "complete",
+        "exported"
+      ],
+      "default": "draft"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "title"
+  ]
+}
