@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Music, BookOpen, Layers, FileText, Home, Folder } from "lucide-react";
+import { Music, BookOpen, Layers, FileText, Home, Folder, Sparkles } from "lucide-react";
 import LyricChat from "@/components/studio/LyricChat";
 import SunoBuilder from "@/components/studio/SunoBuilder";
 import StyleLibrary from "@/components/studio/StyleLibrary";
@@ -47,6 +47,11 @@ export default function Studio() {
           ))}
         </nav>
         <div className="flex items-center gap-1">
+          <Link to="/song-builder">
+            <button className="flex items-center gap-1 text-white/40 hover:text-purple-300 transition-colors text-xs px-2 py-1.5 rounded-lg hover:bg-purple-500/10">
+              <Sparkles className="w-3.5 h-3.5" /><span className="hidden sm:block">Song Builder</span>
+            </button>
+          </Link>
           <Link to="/warehouse">
             <button className="flex items-center gap-1 text-white/40 hover:text-amber-300 transition-colors text-xs px-2 py-1.5 rounded-lg hover:bg-amber-500/10">
               <Folder className="w-3.5 h-3.5" /><span className="hidden sm:block">Warehouse</span>

@@ -10,6 +10,7 @@ import Landing from "./pages/Landing";
 import Studio from "./pages/Studio";
 import Warehouse from "./pages/Warehouse";
 import ScriptureFinder from "./pages/ScriptureFinder";
+import SongBuilder from "./pages/SongBuilder";
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -41,6 +42,7 @@ const AuthenticatedApp = () => {
       <Route path="/studio" element={<Studio />} />
       <Route path="/warehouse" element={<Warehouse />} />
       <Route path="/scripture" element={<ScriptureFinder />} />
+      <Route path="/song-builder" element={<SongBuilder />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
