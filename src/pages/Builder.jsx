@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Send, Sparkles, Loader2, Copy, Check, Music, BookOpen, Mic2, RotateCcw, Save } from "lucide-react";
 import { toast } from "sonner";
-import { STYLE_PALETTE, THEOLOGICAL_RULES, LYRIC_RULES, STYLE_TAG_RULES, CAPTION_PLATFORMS } from "@/lib/constants";
+import { STYLE_PALETTE, THEOLOGICAL_RULES, LYRIC_RULES, STYLE_TAG_RULES, CAPTION_PLATFORMS, SOURCE_ANALYSIS_RULES } from "@/lib/constants";
 
 function CopyBox({ label, content, mono = false, rows = 6 }) {
   const [copied, setCopied] = useState(false);
@@ -96,6 +96,8 @@ export default function Builder() {
 
 ${THEOLOGICAL_RULES}
 
+${SOURCE_ANALYSIS_RULES}
+
 ${LYRIC_RULES}
 
 ${STYLE_TAG_RULES}
@@ -103,25 +105,47 @@ ${STYLE_TAG_RULES}
 CONVERSATION SO FAR:
 ${conversationHistory}
 
-Based on the conversation above, build a COMPLETE song. If the user hasn't given enough detail yet, ask 1-2 focused questions before building. Otherwise produce the full output.
+Based on the conversation above, decide what to do:
 
-If building, return JSON with:
-- title: string
-- hook_line: string  
-- lyrics: full lyrics using correct bracket/paren rules
-- style_tag: Suno Block 2 style tag (comma-separated, max 950 chars)
-- backstory: 2-3 sentences
-- scripture_refs: array of 2-4 NASB95 verse references
-- production_notes: string
-- captions: { instagram, tiktok, facebook, youtube, twitter }
-- is_question: boolean (true if asking the user for more info instead of building)
-- question_text: string (the question to ask, if is_question=true)`;
+A) If the user just pasted a source text (sermon, transcript, devotional, article, journal entry) AND has not yet confirmed a pre-check → return is_check=true with the six analysis fields. Do NOT write lyrics yet.
+
+B) If the user confirmed the pre-check (said "looks good", "proceed", "write it", "yes", etc.) → write the full song.
+
+C) If the user gave a simple theme/idea (not a full source text) → ask 1-2 focused questions OR build directly.
+
+Return JSON with ALL of these fields (use null for unused ones):
+- is_check: boolean (true = pre-check response, not lyrics yet)
+- central_argument: string or null
+- central_tension: string or null
+- load_bearing_images: array of strings or null
+- posture: string or null
+- landing: string or null
+- drift_to_avoid: string or null
+- is_question: boolean
+- question_text: string or null
+- title: string or null
+- hook_line: string or null
+- lyrics: string or null
+- style_tag: string or null
+- backstory: string or null
+- scripture_refs: array of strings or null
+- production_notes: string or null
+- captions: object { instagram, tiktok, facebook, youtube, twitter } or null`;
 
     const res = await base44.integrations.Core.InvokeLLM({
       prompt,
       response_json_schema: {
         type: "object",
         properties: {
+          is_check: { type: "boolean" },
+          central_argument: { type: "string" },
+          central_tension: { type: "string" },
+          load_bearing_images: { type: "array", items: { type: "string" } },
+          posture: { type: "string" },
+          landing: { type: "string" },
+          drift_to_avoid: { type: "string" },
+          is_question: { type: "boolean" },
+          question_text: { type: "string" },
           title: { type: "string" },
           hook_line: { type: "string" },
           lyrics: { type: "string" },
@@ -139,15 +163,16 @@ If building, return JSON with:
               twitter: { type: "string" },
             }
           },
-          is_question: { type: "boolean" },
-          question_text: { type: "string" },
         }
       }
     });
 
-    if (res.is_question && res.question_text) {
+    if (res.is_check) {
+      const checkText = `Before I write, let me confirm I'm capturing the heart of this text:\n\n📌 **Central argument:** ${res.central_argument}\n\n⚡ **Central tension:** ${res.central_tension}\n\n🖼 **Load-bearing images:** ${(res.load_bearing_images || []).map((img, i) => `${i+1}. ${img}`).join(" · ")}\n\n🧭 **Posture:** ${res.posture}\n\n🏁 **Where it lands:** ${res.landing}\n\n⚠️ **What this song must NOT become:** ${res.drift_to_avoid}\n\n---\nDoes this read right? Say "looks good" and I'll write the lyrics.`;
+      setMessages(prev => [...prev, { role: "assistant", content: checkText }]);
+    } else if (res.is_question && res.question_text) {
       setMessages(prev => [...prev, { role: "assistant", content: res.question_text }]);
-    } else {
+    } else if (res.title && res.lyrics) {
       setMessages(prev => [...prev, { role: "assistant", content: `Built "${res.title}" — see the output below. Copy each block directly into Suno.` }]);
       setResult(res);
       setSaved(false);

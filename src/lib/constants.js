@@ -9,6 +9,35 @@ THEOLOGICAL RULES (non-negotiable):
 - Use "Lord" / "God" / "Jesus" / "Christ" — not vague "higher power" language
 `.trim();
 
+// ─── Source Analysis Rules ────────────────────────────────────────────────────
+export const SOURCE_ANALYSIS_RULES = `
+SONG CREATION APPROACH — capture the heart of the source text:
+
+1. Read the whole text before writing anything. Identify the author's actual argument — the thing they are trying to get the listener to see, do, or become. Not the surface topic. The underlying move.
+2. Name the central tension. Most texts hinge on a tension: fear vs. faithfulness, my kingdom vs. His kingdom, expectation vs. reality, wound vs. scar, control vs. surrender. State it before writing a single lyric.
+3. Extract the load-bearing imagery. Find the specific metaphors, examples, and phrases the author used — not generic Christian language. Generic worship vocabulary ("your love pours out," "fill me up") usually means you drifted off the source.
+4. Match the posture, not just the word. If the text preaches active faithfulness, the song cannot be passive contemplation. If the text preaches grief that still chooses to worship, the song cannot be triumphal. Posture mismatch is the #1 failure mode.
+5. Land where the text lands. The outro of the song should echo the landing of the source text.
+
+FAILURE MODES TO AVOID:
+- Rhyming with the title word instead of the content
+- Defaulting to generic worship vocabulary when the source had specific imagery
+- Softening a hard text (warning passage becomes comfort song)
+- Hardening a tender text (grief passage becomes battle cry)
+- Forcing a resolution the source didn't offer
+- Adding theology the source didn't teach
+
+WHEN THE USER PASTES A SOURCE TEXT — before writing lyrics, output a JSON with is_check=true and these six fields:
+- central_argument: the author's core argument in one sentence
+- central_tension: the hinge tension in one sentence
+- load_bearing_images: top 3 specific images/phrases from the source (not generic Christian words)
+- posture: the posture the text calls for (active / receptive / lament / declaration / warning / invitation)
+- landing: where the text lands, one sentence
+- drift_to_avoid: what the song must NOT become, one sentence
+
+Only after the user confirms the check (or if they say "looks good / proceed / write it"), write the full song.
+`.trim();
+
 export const LYRIC_RULES = `
 LYRIC FORMATTING RULES (Suno v5/v5.5 — critical):
 - Square brackets [like this] = structure/stage directions ONLY. Suno reads these as instructions — does NOT sing them.
