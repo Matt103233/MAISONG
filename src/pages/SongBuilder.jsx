@@ -43,6 +43,10 @@ export default function SongBuilder() {
   const [structure, setStructure] = useState(STRUCTURES[0]);
   const [title, setTitle] = useState("");
 
+  // Step 2 — Suno settings
+  const [weirdness, setWeirdness] = useState(25);
+  const [styleInfluence, setStyleInfluence] = useState(80);
+
   // Step 3 — Output
   const [result, setResult] = useState(null);
 
@@ -60,9 +64,9 @@ export default function SongBuilder() {
     setLoading(true);
     setStep(2);
 
-    const prompt = `You are SongForge AI — a world-class gospel/Christian lyricist and music producer assistant for Harrison Productions.
+    const prompt = `You are SongForge AI — a world-class gospel/Christian lyricist and music producer for Harrison Productions (A Scarred Disciple).
 
-Your task: Combine the user's raw ideas and personal notes into a COMPLETE, emotionally powerful, production-ready song.
+Your task: Turn the user's raw ideas into a COMPLETE, production-ready song for Suno AI v5/v5.5.
 
 INPUTS:
 - Raw idea / inspiration: "${rawIdea}"
@@ -71,18 +75,25 @@ INPUTS:
 - Genre: ${genre}
 - Mood: ${mood}
 - Song structure: ${structure}
-- Suggested title: "${title || "Let the AI decide"}"
+- Suggested title: "${title || "AI decides"}"
+
+CRITICAL LYRICS FORMATTING RULES (Suno v5/v5.5):
+- Square brackets [like this] = structure/stage directions ONLY. Suno reads these as instructions — does NOT sing them.
+  Use for: [Intro], [Verse 1 — piano only], [Chorus], [Bridge — voice alone], [Outro — fade]
+- Parentheses (like this) = backup vocals / delivery cues. Suno WILL sing/render these.
+  Use for: echo lines, harmonies, choir responses, (whispered), (belted), (spoken word)
+- NEVER swap them. Stage direction in parens = Suno tries to sing it. Backup vocals in brackets = ignored.
 
 OUTPUT — Return a JSON object with:
 1. "title": A powerful, memorable song title
-2. "hook_line": The single most memorable line of the entire song (1 sentence)
-3. "lyrics": Complete structured lyrics using [Verse 1], [Chorus], [Verse 2], [Bridge], etc. — emotionally authentic, scripture-informed where relevant, with rhyme and flow
-4. "suno_prompt": A detailed Suno AI style prompt (comma-separated descriptors: genre, instruments, vocal style, mood, tempo, production)
+2. "hook_line": The single most memorable line of the entire song
+3. "lyrics": Complete lyrics using the EXACT bracket/paren rules above. Rich, emotionally authentic, scripture-informed. Real rhyme and flow.
+4. "style_tag": BLOCK 2 style tag — comma-separated SHORT tags only (1-3 words each, max 950 chars, NO sentences). Order: genre, mood/energy, vocal direction, key instruments, production aesthetic, exact BPM number, negative prompts last. Example format: "cinematic gospel soul, confessional, weathered raspy baritone, fingerpicked acoustic, cello undertone, brushed snare, warm analog, intimate, 72 BPM, no autotune, no electronic drums"
 5. "backstory": 2-3 sentences on the heart behind this song
-6. "scripture_refs": Array of 2-4 Bible verse references that inspired or match this song (e.g. ["Romans 8:1", "Isaiah 61:3"])
-7. "production_notes": Key production ideas — tempo, key, instrumentation, feel
+6. "scripture_refs": Array of 2-4 Bible verse references (e.g. ["Romans 8:1", "Isaiah 61:3"])
+7. "production_notes": Tempo, key, instrumentation, feel
 
-Make the lyrics REAL, DEEP, and AUTHENTIC — not generic. Draw from the personal note and raw idea to make this song feel lived-in.`;
+Make the lyrics REAL and LIVED-IN — not generic. Draw directly from the personal note.`;
 
     const res = await base44.integrations.Core.InvokeLLM({
       prompt,
@@ -92,7 +103,7 @@ Make the lyrics REAL, DEEP, and AUTHENTIC — not generic. Draw from the persona
           title: { type: "string" },
           hook_line: { type: "string" },
           lyrics: { type: "string" },
-          suno_prompt: { type: "string" },
+          style_tag: { type: "string" },
           backstory: { type: "string" },
           scripture_refs: { type: "array", items: { type: "string" } },
           production_notes: { type: "string" },
@@ -100,7 +111,7 @@ Make the lyrics REAL, DEEP, and AUTHENTIC — not generic. Draw from the persona
       }
     });
 
-    setResult(res);
+    setResult({ ...res, weirdness, styleInfluence });
     setEditedLyrics(res.lyrics || "");
     setLoading(false);
   };
@@ -130,7 +141,7 @@ Return ONLY the updated complete lyrics, keeping the same structure. Make the ch
     await base44.entities.Song.create({
       title: result.title,
       lyrics: editedLyrics,
-      suno_prompt: result.suno_prompt,
+      suno_prompt: result.style_tag,
       hook_line: result.hook_line,
       backstory: result.backstory,
       production_notes: result.production_notes,
@@ -154,6 +165,7 @@ Return ONLY the updated complete lyrics, keeping the same structure. Make the ch
     setStep(0);
     setRawIdea(""); setPersonalNote(""); setSelectedThemes([]);
     setGenre("Gospel"); setMood("Uplifting"); setStructure(STRUCTURES[0]); setTitle("");
+    setWeirdness(25); setStyleInfluence(80);
     setResult(null); setEditedLyrics(""); setRefineNote(""); setSaved(false);
   };
 
@@ -312,6 +324,31 @@ Return ONLY the updated complete lyrics, keeping the same structure. Make the ch
                 </div>
               </div>
 
+              {/* Suno Settings */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-4">
+                <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">Suno Session Settings</h3>
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="text-xs text-white/50">Weirdness</label>
+                      <span className="text-sm font-bold text-purple-300">{weirdness}%</span>
+                    </div>
+                    <input type="range" min="0" max="100" value={weirdness} onChange={e => setWeirdness(Number(e.target.value))}
+                      className="w-full accent-purple-500 cursor-pointer" />
+                    <p className="text-[10px] text-white/25 mt-1">Default: 20–30%</p>
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="text-xs text-white/50">Style Influence</label>
+                      <span className="text-sm font-bold text-amber-300">{styleInfluence}%</span>
+                    </div>
+                    <input type="range" min="0" max="100" value={styleInfluence} onChange={e => setStyleInfluence(Number(e.target.value))}
+                      className="w-full accent-amber-500 cursor-pointer" />
+                    <p className="text-[10px] text-white/25 mt-1">Default: 80% (resets each session)</p>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex gap-3">
                 <Button onClick={() => setStep(0)} variant="ghost" className="border border-white/10 text-white/40 hover:text-white">
                   <ArrowLeft className="w-4 h-4 mr-1" /> Back
@@ -360,9 +397,17 @@ Return ONLY the updated complete lyrics, keeping the same structure. Make the ch
                     <p className="text-amber-300/80 italic text-base">"{result.hook_line}"</p>
                   )}
                 </div>
-                <Button onClick={() => setStep(3)} className="bg-purple-600 hover:bg-purple-700 border-0">
-                  Refine & Save <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="ghost" onClick={() => {
+                    const all = `BLOCK 1 — LYRICS\n\n${result.lyrics}\n\n---\n\nBLOCK 2 — STYLE TAG\n\n${result.style_tag}\n\n---\n\nBLOCK 3 — SESSION SETTINGS\n\nTitle: ${result.title}\nWeirdness: ${result.weirdness}%\nStyle Influence: ${result.styleInfluence}%`;
+                    copy(all);
+                  }} className="text-white/30 hover:text-white border border-white/10 h-9 text-xs px-3">
+                    <Copy className="w-3 h-3 mr-1" /> Copy All Blocks
+                  </Button>
+                  <Button onClick={() => setStep(3)} className="bg-purple-600 hover:bg-purple-700 border-0">
+                    Refine & Save <ArrowRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </div>
               </div>
 
               {/* Scripture refs */}
@@ -387,17 +432,39 @@ Return ONLY the updated complete lyrics, keeping the same structure. Make the ch
                 <pre className="text-white/90 text-sm leading-relaxed whitespace-pre-wrap font-sans">{result.lyrics}</pre>
               </div>
 
-              {/* Suno Prompt */}
+              {/* BLOCK 2 — Style Tag */}
               <div className="bg-purple-500/5 border border-purple-500/20 rounded-2xl p-5">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-purple-300 text-sm uppercase tracking-wider flex items-center gap-1.5">
-                    <Mic2 className="w-4 h-4" /> Suno Prompt
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-semibold text-purple-300 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <Mic2 className="w-3.5 h-3.5" /> Block 2 — Style Tag
+                    <span className="text-white/20 font-normal normal-case">({result.style_tag?.length || 0}/1000 chars)</span>
                   </h3>
-                  <Button size="sm" variant="ghost" onClick={() => copy(result.suno_prompt)} className="text-purple-300/40 hover:text-purple-300 h-7 text-xs">
+                  <Button size="sm" variant="ghost" onClick={() => copy(result.style_tag)} className="text-purple-300/40 hover:text-purple-300 h-7 text-xs">
                     <Copy className="w-3 h-3 mr-1" /> Copy
                   </Button>
                 </div>
-                <p className="text-white/70 text-sm">{result.suno_prompt}</p>
+                <p className="text-white/80 text-sm font-mono leading-relaxed">{result.style_tag}</p>
+              </div>
+
+              {/* BLOCK 3 — Title / Weirdness / Style Influence */}
+              <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-5">
+                <h3 className="font-semibold text-amber-300 text-xs uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                  <Music className="w-3.5 h-3.5" /> Block 3 — Session Settings
+                </h3>
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div className="bg-white/5 rounded-xl p-3">
+                    <div className="text-lg font-bold text-white">{result.title}</div>
+                    <div className="text-[10px] text-white/30 uppercase tracking-wider mt-1">Title</div>
+                  </div>
+                  <div className="bg-white/5 rounded-xl p-3">
+                    <div className="text-lg font-bold text-purple-300">{result.weirdness}%</div>
+                    <div className="text-[10px] text-white/30 uppercase tracking-wider mt-1">Weirdness</div>
+                  </div>
+                  <div className="bg-white/5 rounded-xl p-3">
+                    <div className="text-lg font-bold text-amber-300">{result.styleInfluence}%</div>
+                    <div className="text-[10px] text-white/30 uppercase tracking-wider mt-1">Style Influence</div>
+                  </div>
+                </div>
               </div>
 
               {/* Backstory + Production Notes */}
