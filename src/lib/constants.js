@@ -11,31 +11,48 @@ THEOLOGICAL RULES (non-negotiable):
 
 // ─── Source Analysis Rules ────────────────────────────────────────────────────
 export const SOURCE_ANALYSIS_RULES = `
-SONG CREATION APPROACH — capture the heart of the source text:
+═══════════════════════════════════════
+HOW TO CAPTURE THE HEART OF SOURCE TEXT
+═══════════════════════════════════════
 
-1. Read the whole text before writing anything. Identify the author's actual argument — the thing they are trying to get the listener to see, do, or become. Not the surface topic. The underlying move.
-2. Name the central tension. Most texts hinge on a tension: fear vs. faithfulness, my kingdom vs. His kingdom, expectation vs. reality, wound vs. scar, control vs. surrender. State it before writing a single lyric.
-3. Extract the load-bearing imagery. Find the specific metaphors, examples, and phrases the author used — not generic Christian language. Generic worship vocabulary ("your love pours out," "fill me up") usually means you drifted off the source.
-4. Match the posture, not just the word. If the text preaches active faithfulness, the song cannot be passive contemplation. If the text preaches grief that still chooses to worship, the song cannot be triumphal. Posture mismatch is the #1 failure mode.
-5. Land where the text lands. The outro of the song should echo the landing of the source text.
+Your job is NOT to rhyme with the title or surface theme. Your job is to preach the argument.
 
-FAILURE MODES TO AVOID:
-- Rhyming with the title word instead of the content
-- Defaulting to generic worship vocabulary when the source had specific imagery
-- Softening a hard text (warning passage becomes comfort song)
-- Hardening a tender text (grief passage becomes battle cry)
-- Forcing a resolution the source didn't offer
-- Adding theology the source didn't teach
+WHAT "CAPTURE THE HEART" MEANS:
+1. Read the whole text. Identify the author's actual argument — what they want the listener to see, do, or become. The UNDERLYING MOVE, not the surface topic.
+2. Name the central tension. Every worth-writing text hinges on a "vs.": fear vs. faithfulness, my kingdom vs. His kingdom, hiding vs. investing, wound vs. scar. State it.
+3. Extract load-bearing imagery. Find the SPECIFIC metaphors, acronyms, examples, and phrases the author used. "Mina in the handkerchief." "DPS." "Turtle beats rabbit." "Well done" vs. "I had so much more for you." These are your hooks — NOT generic worship vocabulary.
+4. Match the posture EXACTLY. Active text → active song. Lament text → lament song. A sermon that commands "engage in business" CANNOT become a contemplative silence song. Posture mismatch is the #1 failure mode.
+5. Land where the text lands. The outro echoes the final move of the source. No soft endings on hard texts.
 
-WHEN THE USER PASTES A SOURCE TEXT — before writing lyrics, output a JSON with is_check=true and these six fields:
-- central_argument: the author's core argument in one sentence
-- central_tension: the hinge tension in one sentence
-- load_bearing_images: top 3 specific images/phrases from the source (not generic Christian words)
-- posture: the posture the text calls for (active / receptive / lament / declaration / warning / invitation)
-- landing: where the text lands, one sentence
-- drift_to_avoid: what the song must NOT become, one sentence
+THE FIVE FAILURE MODES (memorize and avoid):
+1. Rhyming with the title word instead of the content (e.g., text says "wait = engage in business" → song says "wait = sit in silence" — WRONG)
+2. Defaulting to generic worship vocabulary when the source had specific imagery
+3. Softening a hard text (warning passage becomes comfort song)
+4. Hardening a tender text (grief passage becomes battle cry)
+5. Forcing a resolution or adding theology the source didn't offer
 
-Only after the user confirms the check (or if they say "looks good / proceed / write it"), write the full song.
+SECTION-LEVEL RULE: After confirming the check, every section — intro, verses, chorus, bridge, outro — must carry at least one load-bearing image or move from the source. A section with ZERO fingerprint from the source has drifted and must be rewritten before delivering.
+
+WORKED EXAMPLE (Luke 19:11-27, Parable of the Minas):
+- Argument: While waiting for Christ's return, stop hiding your gifts and actively invest what He gave you in His kingdom — an audit is coming.
+- Tension: My kingdom vs. His kingdom / Fearful hiding vs. Faithful engaging.
+- Load-bearing images: Mina in the handkerchief; friction (anxiety/bitterness) vs. fruit (Galatians 5); "Well done" vs. "I had so much more for you"; three servant types (faithful, fearful, foe).
+- Posture: Active, confrontational, commissioning. Slight discomfort required.
+- Landing: "Here I am, use me. Thy kingdom come, thy will be done."
+- Must NOT become: A passive contemplative worship song about sitting in silence — that inverts the sermon entirely.
+
+WHEN THE USER PASTES A SOURCE TEXT:
+Your FIRST response is the six-line check below. NEVER lyrics first. Not even a partial lyric.
+
+Output JSON with is_check=true and:
+- central_argument: one sentence — the author's underlying move
+- central_tension: one sentence — the "vs." this text is built on
+- load_bearing_images: array of 3 SPECIFIC images/phrases/examples from the source (NO generic God-language)
+- posture: exact posture the text demands (active / receptive / lament / declaration / warning / invitation / commissioning / confrontational)
+- landing: one sentence — the final move, the closing call
+- drift_to_avoid: one sentence — name the exact wrong song this could become
+
+Only after the user confirms ("looks good", "proceed", "write it", "yes") → write the full song with every section carrying source fingerprints.
 `.trim();
 
 export const LYRIC_RULES = `
