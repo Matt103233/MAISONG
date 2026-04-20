@@ -1,0 +1,30 @@
+{
+  "name": "SongVersion",
+  "type": "object",
+  "properties": {
+    "song_id": {
+      "type": "string"
+    },
+    "version_label": {
+      "type": "string"
+    },
+    "lyrics": {
+      "type": "string"
+    },
+    "style_tag": {
+      "type": "string"
+    },
+    "weirdness_pct": {
+      "type": "number"
+    },
+    "style_influence_pct": {
+      "type": "number"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "song_id"
+  ]
+}
