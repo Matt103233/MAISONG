@@ -220,11 +220,11 @@ If building, return JSON with:
         </div>
       </header>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
         {/* Chat Panel */}
-        <div className="flex flex-col w-full max-w-xl border-r border-white/10 flex-shrink-0">
+        <div className="flex flex-col w-full lg:max-w-xl border-b lg:border-b-0 lg:border-r border-white/10 flex-shrink-0" style={{ minHeight: result ? "auto" : "100%" }}>
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-5">
+          <div className={`overflow-y-auto p-5 space-y-5 ${result ? "max-h-48 lg:flex-1 lg:max-h-none" : "flex-1"}`}>
             {messages.map((msg, i) => <ChatMessage key={i} msg={msg} />)}
             {loading && (
               <div className="flex gap-3">
@@ -261,8 +261,8 @@ If building, return JSON with:
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
-                placeholder="Describe your song idea, paste a journal entry, or give feedback..."
-                className="bg-white/5 border-white/10 text-white placeholder:text-white/25 text-sm min-h-[60px] max-h-[140px] resize-none"
+                placeholder="Tap to type or paste a journal entry, prayer, or idea..."
+                className="bg-white/5 border border-white/20 text-white placeholder:text-white/35 text-sm min-h-[72px] max-h-[180px] resize-none focus-visible:border-purple-500/50"
               />
               <Button onClick={send} disabled={!input.trim() || loading}
                 className="bg-purple-600 hover:bg-purple-700 border-0 h-auto px-4 self-stretch">
@@ -273,7 +273,7 @@ If building, return JSON with:
         </div>
 
         {/* Output Blocks */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4">
+        <div className="flex-1 overflow-y-auto p-5 space-y-4 min-h-0">
           {!result ? (
             <div className="flex flex-col items-center justify-center h-full text-white/15 gap-4">
               <Mic2 className="w-14 h-14 opacity-20" />
