@@ -12,6 +12,7 @@ import Catalog from "./pages/Catalog";
 import Journal from "./pages/Journal";
 import Prompt from "./pages/Prompt";
 
+
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
