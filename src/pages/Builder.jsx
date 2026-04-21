@@ -424,7 +424,8 @@ Return JSON with ALL of these fields (use null for unused ones):
                   const found = stylePrompts.find(s => s.id === e.target.value);
                   setSelectedStyle(found || null);
                 }}
-                className="w-full bg-white/5 border border-white/15 text-white/70 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-purple-500/50"
+                className="w-full border border-white/15 text-white/70 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-purple-500/50"
+                style={{ background: "#1a1625", color: "rgba(255,255,255,0.7)" }}
               >
                 <option value="">— No style selected —</option>
                 {["genre", "mood", "instrument", "structure", "theme", "bible_theme", "custom"].map(cat => {
