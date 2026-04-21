@@ -191,22 +191,23 @@ Return JSON with ALL of these fields (use null for unused ones):
       setResult(res);
       setSaved(false);
       setMobileTab("output");
+      saveSong(res);
     }
     setLoading(false);
   };
 
-  const saveSong = async () => {
-    if (!result) return;
+  const saveSong = async (songResult = result) => {
+    if (!songResult) return;
     setSaving(true);
     await base44.entities.Song.create({
-      title: result.title,
-      lyrics_block: result.lyrics,
-      style_tag: result.style_tag,
-      hook_line: result.hook_line,
-      backstory: result.backstory,
-      production_notes: result.production_notes,
-      scripture: result.scripture_refs || [],
-      captions: result.captions,
+      title: songResult.title,
+      lyrics_block: songResult.lyrics,
+      style_tag: songResult.style_tag,
+      hook_line: songResult.hook_line,
+      backstory: songResult.backstory,
+      production_notes: songResult.production_notes,
+      scripture: songResult.scripture_refs || [],
+      captions: songResult.captions,
       weirdness_pct: weirdness,
       style_influence_pct: styleInfluence,
       status: "draft",
@@ -296,6 +297,7 @@ Return JSON with ALL of these fields (use null for unused ones):
       setResult(res);
       setSaved(false);
       setMobileTab("output");
+      saveSong(res);
     }
     setLoading(false);
   };
