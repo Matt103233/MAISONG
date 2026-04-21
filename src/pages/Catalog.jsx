@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -56,6 +56,8 @@ export default function Catalog() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const autoSaveTimer = useRef(null);
   const [showPasteModal, setShowPasteModal] = useState(false);
   const [activeTab, setActiveTab] = useState("lyrics");
   const [activeCaption, setActiveCaption] = useState("instagram");
@@ -72,17 +74,47 @@ export default function Catalog() {
     });
   }, []);
 
-  const selectSong = (song) => { setSelected(song); setLocal(song); setActiveTab("lyrics"); };
+  const selectSong = (song) => {
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    setSelected(song);
+    setLocal(song);
+    setDirty(false);
+    setActiveTab("lyrics");
+  };
 
-  const updateLocal = (field, value) => setLocal(s => ({ ...s, [field]: value }));
-  const updateCaption = (platform, value) => setLocal(s => ({ ...s, captions: { ...(s.captions || {}), [platform]: value } }));
+  const saveNow = useCallback(async (data) => {
+    if (!data?.id) return;
+    setSaving(true);
+    await base44.entities.Song.update(data.id, data);
+    setSongs(prev => prev.map(s => s.id === data.id ? data : s));
+    setSelected(data);
+    setDirty(false);
+    setSaving(false);
+  }, []);
+
+  const updateLocal = (field, value) => {
+    setLocal(s => {
+      const updated = { ...s, [field]: value };
+      setDirty(true);
+      if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+      autoSaveTimer.current = setTimeout(() => saveNow(updated), 1500);
+      return updated;
+    });
+  };
+
+  const updateCaption = (platform, value) => {
+    setLocal(s => {
+      const updated = { ...s, captions: { ...(s.captions || {}), [platform]: value } };
+      setDirty(true);
+      if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+      autoSaveTimer.current = setTimeout(() => saveNow(updated), 1500);
+      return updated;
+    });
+  };
 
   const save = async () => {
-    setSaving(true);
-    await base44.entities.Song.update(local.id, local);
-    setSongs(prev => prev.map(s => s.id === local.id ? local : s));
-    setSelected(local);
-    setSaving(false);
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    await saveNow(local);
     toast.success("Saved!");
   };
 
@@ -224,8 +256,8 @@ export default function Catalog() {
                   )}
                 </div>
                 <div className="flex gap-2 flex-shrink-0">
-                  <Button onClick={save} disabled={saving} size="sm" className="bg-purple-600 hover:bg-purple-700 border-0 h-8 text-xs">
-                    <Save className="w-3 h-3 mr-1" />{saving ? "Saving..." : "Save"}
+                  <Button onClick={save} disabled={saving} size="sm" className={`border-0 h-8 text-xs ${dirty ? "bg-amber-600 hover:bg-amber-700" : "bg-purple-600 hover:bg-purple-700"}`}>
+                    <Save className="w-3 h-3 mr-1" />{saving ? "Saving..." : dirty ? "Unsaved" : "Saved"}
                   </Button>
                   <Button onClick={() => deleteSong(local.id)} size="sm" variant="ghost" className="text-red-400/40 hover:text-red-400 h-8 px-2">
                     <Trash2 className="w-3.5 h-3.5" />
