@@ -119,7 +119,7 @@ Based on the conversation above, decide what to do:
 
 A) If the user just pasted a source text (sermon, transcript, devotional, article, journal entry) AND has not yet confirmed a pre-check → return is_check=true with the six analysis fields. Do NOT write lyrics yet.
 
-B) If the user confirmed the pre-check (said "looks good", "proceed", "write it", "yes", etc.) → write the full song.
+B) If the user confirmed the pre-check (said anything like "looks good", "build it", "build it looks good", "proceed", "write it", "yes", "go ahead", "do it", "yep", "correct", "that's right", "sounds right", or any similar affirmative/approval response) → write the full song. When in doubt, BUILD — do not ask again.
 
 C) If the user gave a simple theme/idea (not a full source text) → ask 1-2 focused questions OR build directly.
 
