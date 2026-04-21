@@ -80,7 +80,6 @@ export default function Builder() {
   const [activeCaption, setActiveCaption] = useState("instagram");
   const [weirdness, setWeirdness] = useState(25);
   const [styleInfluence, setStyleInfluence] = useState(80);
-  const [mobileTab, setMobileTab] = useState("chat"); // "chat" | "output"
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -186,7 +185,6 @@ Return JSON with ALL of these fields (use null for unused ones):
       setMessages(prev => [...prev, { role: "assistant", content: `Built "${res.title}" — see the output below. Copy each block directly into Suno.` }]);
       setResult(res);
       setSaved(false);
-      setMobileTab("output");
     }
     setLoading(false);
   };
@@ -256,25 +254,11 @@ Return JSON with ALL of these fields (use null for unused ones):
         </div>
       </header>
 
-      {/* Mobile tab switcher — only shows when result exists */}
-      {result && (
-        <div className="flex lg:hidden border-b border-white/10 bg-[#0d0d15] flex-shrink-0">
-          <button onClick={() => setMobileTab("chat")}
-            className={`flex-1 py-2.5 text-sm font-medium transition-all ${mobileTab === "chat" ? "text-white border-b-2 border-purple-400" : "text-white/40"}`}>
-            Chat
-          </button>
-          <button onClick={() => setMobileTab("output")}
-            className={`flex-1 py-2.5 text-sm font-medium transition-all ${mobileTab === "output" ? "text-white border-b-2 border-amber-400" : "text-white/40"}`}>
-            Song Output
-          </button>
-        </div>
-      )}
-
-      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
+      <div className="flex flex-row flex-1 overflow-hidden">
         {/* Chat Panel */}
-        <div className={`flex flex-col w-full lg:max-w-xl border-b lg:border-b-0 lg:border-r border-white/10 flex-shrink-0 ${result && mobileTab === "output" ? "hidden lg:flex" : "flex"}`} style={{ minHeight: result ? "auto" : "100%" }}>
+        <div className="flex flex-col w-full max-w-xl border-r border-white/10 flex-shrink-0">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-5">
+          <div className="flex-1 overflow-y-auto p-5 space-y-5 min-h-0">
             {messages.map((msg, i) => <ChatMessage key={i} msg={msg} />)}
             {loading && (
               <div className="flex gap-3">
@@ -323,7 +307,7 @@ Return JSON with ALL of these fields (use null for unused ones):
         </div>
 
         {/* Output Blocks */}
-        <div className={`flex-1 overflow-y-auto p-5 space-y-4 min-h-0 ${result && mobileTab === "chat" ? "hidden lg:block" : "block"}`}>
+        <div className="flex-1 overflow-y-auto p-5 space-y-4 min-h-0">
           {!result ? (
             <div className="flex flex-col items-center justify-center h-full text-white/15 gap-4">
               <Mic2 className="w-14 h-14 opacity-20" />
