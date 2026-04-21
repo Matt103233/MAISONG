@@ -216,22 +216,18 @@ Return JSON with ALL of these fields (use null for unused ones):
     toast.success("Saved to catalog!");
   };
 
-  const sendDirect = (text) => {
-    setInput(text);
-    // small delay so state updates before send reads input
-    setTimeout(() => {
-      setInput("");
-      const newMessages = [...messages, { role: "user", content: text }];
-      setMessages(newMessages);
-      setShowBuildConfirm(false);
-      setLoading(true);
+  const sendDirect = async (text) => {
+    const newMessages = [...messages, { role: "user", content: text }];
+    setMessages(newMessages);
+    setShowBuildConfirm(false);
+    setLoading(true);
 
-      const conversationHistory = newMessages
-        .slice(1)
-        .map(m => `${m.role === "user" ? "USER" : "AI"}: ${m.content}`)
-        .join("\n\n");
+    const conversationHistory = newMessages
+      .slice(1)
+      .map(m => `${m.role === "user" ? "USER" : "AI"}: ${m.content}`)
+      .join("\n\n");
 
-      const prompt = `You are SongForge AI — a world-class Christian lyricist and music producer for Harrison Productions.
+    const prompt = `You are SongForge AI — a world-class Christian lyricist and music producer for Harrison Productions.
 
 ${THEOLOGICAL_RULES}
 
@@ -260,49 +256,48 @@ Return JSON with ALL of these fields (use null for unused ones):
 - production_notes: string or null
 - captions: object { instagram, tiktok, facebook, youtube, twitter }`;
 
-      base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            is_check: { type: "boolean" },
-            central_argument: { type: "string" },
-            central_tension: { type: "string" },
-            load_bearing_images: { type: "array", items: { type: "string" } },
-            posture: { type: "string" },
-            landing: { type: "string" },
-            drift_to_avoid: { type: "string" },
-            is_question: { type: "boolean" },
-            question_text: { type: "string" },
-            title: { type: "string" },
-            hook_line: { type: "string" },
-            lyrics: { type: "string" },
-            style_tag: { type: "string" },
-            backstory: { type: "string" },
-            scripture_refs: { type: "array", items: { type: "string" } },
-            production_notes: { type: "string" },
-            captions: {
-              type: "object",
-              properties: {
-                instagram: { type: "string" },
-                tiktok: { type: "string" },
-                facebook: { type: "string" },
-                youtube: { type: "string" },
-                twitter: { type: "string" },
-              }
-            },
-          }
+    const res = await base44.integrations.Core.InvokeLLM({
+      prompt,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          is_check: { type: "boolean" },
+          central_argument: { type: "string" },
+          central_tension: { type: "string" },
+          load_bearing_images: { type: "array", items: { type: "string" } },
+          posture: { type: "string" },
+          landing: { type: "string" },
+          drift_to_avoid: { type: "string" },
+          is_question: { type: "boolean" },
+          question_text: { type: "string" },
+          title: { type: "string" },
+          hook_line: { type: "string" },
+          lyrics: { type: "string" },
+          style_tag: { type: "string" },
+          backstory: { type: "string" },
+          scripture_refs: { type: "array", items: { type: "string" } },
+          production_notes: { type: "string" },
+          captions: {
+            type: "object",
+            properties: {
+              instagram: { type: "string" },
+              tiktok: { type: "string" },
+              facebook: { type: "string" },
+              youtube: { type: "string" },
+              twitter: { type: "string" },
+            }
+          },
         }
-      }).then(res => {
-        if (res.title && res.lyrics) {
-          setMessages(prev => [...prev, { role: "assistant", content: `Built "${res.title}" — see the output below. Copy each block directly into Suno.` }]);
-          setResult(res);
-          setSaved(false);
-          setMobileTab("output");
-        }
-        setLoading(false);
-      });
-    }, 0);
+      }
+    });
+
+    if (res.title && res.lyrics) {
+      setMessages(prev => [...prev, { role: "assistant", content: `Built "${res.title}" — see the output below. Copy each block directly into Suno.` }]);
+      setResult(res);
+      setSaved(false);
+      setMobileTab("output");
+    }
+    setLoading(false);
   };
 
   const restart = () => {
