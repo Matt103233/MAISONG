@@ -82,7 +82,13 @@ export default function Builder() {
   const [activeCaption, setActiveCaption] = useState("instagram");
   const [weirdness, setWeirdness] = useState(25);
   const [styleInfluence, setStyleInfluence] = useState(80);
+  const [stylePrompts, setStylePrompts] = useState([]);
+  const [selectedStyle, setSelectedStyle] = useState(null);
   const bottomRef = useRef(null);
+
+  useEffect(() => {
+    base44.entities.StylePrompt.list("name", 100).then(data => setStylePrompts(data));
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -103,6 +109,8 @@ export default function Builder() {
       .map(m => `${m.role === "user" ? "USER" : "AI"}: ${m.content}`)
       .join("\n\n");
 
+    const styleContext = selectedStyle ? `\nSELECTED STYLE PROMPT (use this to shape the style tag and musical feel):\nName: ${selectedStyle.name}\n${selectedStyle.prompt_text}\n` : "";
+
     const prompt = `You are SongForge AI — a world-class Christian lyricist and music producer for Harrison Productions.
 
 ${THEOLOGICAL_RULES}
@@ -112,7 +120,7 @@ ${SOURCE_ANALYSIS_RULES}
 ${LYRIC_RULES}
 
 ${STYLE_TAG_RULES}
-
+${styleContext}
 CONVERSATION SO FAR:
 ${conversationHistory}
 
@@ -228,6 +236,8 @@ Return JSON with ALL of these fields (use null for unused ones):
       .map(m => `${m.role === "user" ? "USER" : "AI"}: ${m.content}`)
       .join("\n\n");
 
+    const styleContext2 = selectedStyle ? `\nSELECTED STYLE PROMPT (use this to shape the style tag and musical feel):\nName: ${selectedStyle.name}\n${selectedStyle.prompt_text}\n` : "";
+
     const prompt = `You are SongForge AI — a world-class Christian lyricist and music producer for Harrison Productions.
 
 ${THEOLOGICAL_RULES}
@@ -237,7 +247,7 @@ ${SOURCE_ANALYSIS_RULES}
 ${LYRIC_RULES}
 
 ${STYLE_TAG_RULES}
-
+${styleContext2}
 CONVERSATION SO FAR:
 ${conversationHistory}
 
@@ -401,6 +411,37 @@ Return JSON with ALL of these fields (use null for unused ones):
               >
                 <Sparkles className="w-4 h-4" /> Looks good — build it!
               </button>
+            </div>
+          )}
+
+          {/* Style Prompt Picker */}
+          {stylePrompts.length > 0 && (
+            <div className="px-4 pt-3 pb-1 border-t border-white/10 bg-[#0d0d15]">
+              <p className="text-[10px] text-white/25 uppercase tracking-wider font-semibold mb-1.5">Style Prompt</p>
+              <select
+                value={selectedStyle?.id || ""}
+                onChange={e => {
+                  const found = stylePrompts.find(s => s.id === e.target.value);
+                  setSelectedStyle(found || null);
+                }}
+                className="w-full bg-white/5 border border-white/15 text-white/70 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-purple-500/50"
+              >
+                <option value="">— No style selected —</option>
+                {["genre", "mood", "instrument", "structure", "theme", "bible_theme", "custom"].map(cat => {
+                  const group = stylePrompts.filter(s => s.category === cat);
+                  if (!group.length) return null;
+                  return (
+                    <optgroup key={cat} label={cat.charAt(0).toUpperCase() + cat.slice(1).replace("_", " ")}>
+                      {group.map(s => (
+                        <option key={s.id} value={s.id}>{s.is_favorite ? "⭐ " : ""}{s.name}</option>
+                      ))}
+                    </optgroup>
+                  );
+                })}
+              </select>
+              {selectedStyle && (
+                <p className="text-[10px] text-white/30 mt-1 px-1 italic">{selectedStyle.description}</p>
+              )}
             </div>
           )}
 
