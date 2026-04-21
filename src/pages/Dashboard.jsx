@@ -39,7 +39,7 @@ export default function Dashboard() {
           <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #c87c20, #8a5010)" }}>
             <Music className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold text-lg tracking-tight text-white">SongForge AI</span>
+          <span className="font-bold text-lg tracking-tight text-white">mAIsong.ai</span>
         </div>
         <nav className="flex gap-1">
           {[{ to: "/builder", label: "Builder" }, { to: "/catalog", label: "Catalog" }, { to: "/journal", label: "Journal" }, { to: "/prompt", label: "Prompt" }].map(n => (
