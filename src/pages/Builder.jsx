@@ -61,9 +61,11 @@ function ChatMessage({ msg }) {
 }
 
 const QUICK_PROMPTS = [
+  "🙏 Gratitude song — every good gift comes from above",
+  "🎉 Joy anthem — dancing before the Lord in the storm",
+  "☀️ Morning mercies — new every day, Lamentations 3",
   "Write a song about grief after losing a parent",
   "A recovery anthem — 5 years sober, still standing",
-  "Grace that meets you in the lowest moment",
   "Surrender song — letting go of control",
   "Song about God's faithfulness through failure",
 ];
