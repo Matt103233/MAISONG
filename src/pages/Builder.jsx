@@ -78,6 +78,7 @@ export default function Builder() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [mobileTab, setMobileTab] = useState("chat");
+  const [showBuildConfirm, setShowBuildConfirm] = useState(false);
   const [activeCaption, setActiveCaption] = useState("instagram");
   const [weirdness, setWeirdness] = useState(25);
   const [styleInfluence, setStyleInfluence] = useState(80);
@@ -178,11 +179,14 @@ Return JSON with ALL of these fields (use null for unused ones):
     });
 
     if (res.is_check) {
-      const checkText = `Before I write, let me confirm I'm capturing the heart of this text:\n\n📌 **Central argument:** ${res.central_argument}\n\n⚡ **Central tension:** ${res.central_tension}\n\n🖼 **Load-bearing images:** ${(res.load_bearing_images || []).map((img, i) => `${i+1}. ${img}`).join(" · ")}\n\n🧭 **Posture:** ${res.posture}\n\n🏁 **Where it lands:** ${res.landing}\n\n⚠️ **What this song must NOT become:** ${res.drift_to_avoid}\n\n---\nDoes this read right? Say "looks good" and I'll write the lyrics.`;
+      const checkText = `Before I write, let me confirm I'm capturing the heart of this text:\n\n📌 **Central argument:** ${res.central_argument}\n\n⚡ **Central tension:** ${res.central_tension}\n\n🖼 **Load-bearing images:** ${(res.load_bearing_images || []).map((img, i) => `${i+1}. ${img}`).join(" · ")}\n\n🧭 **Posture:** ${res.posture}\n\n🏁 **Where it lands:** ${res.landing}\n\n⚠️ **What this song must NOT become:** ${res.drift_to_avoid}`;
       setMessages(prev => [...prev, { role: "assistant", content: checkText }]);
+      setShowBuildConfirm(true);
     } else if (res.is_question && res.question_text) {
+      setShowBuildConfirm(false);
       setMessages(prev => [...prev, { role: "assistant", content: res.question_text }]);
     } else if (res.title && res.lyrics) {
+      setShowBuildConfirm(false);
       setMessages(prev => [...prev, { role: "assistant", content: `Built "${res.title}" — see the output below. Copy each block directly into Suno.` }]);
       setResult(res);
       setSaved(false);
@@ -210,6 +214,95 @@ Return JSON with ALL of these fields (use null for unused ones):
     setSaved(true);
     setSaving(false);
     toast.success("Saved to catalog!");
+  };
+
+  const sendDirect = (text) => {
+    setInput(text);
+    // small delay so state updates before send reads input
+    setTimeout(() => {
+      setInput("");
+      const newMessages = [...messages, { role: "user", content: text }];
+      setMessages(newMessages);
+      setShowBuildConfirm(false);
+      setLoading(true);
+
+      const conversationHistory = newMessages
+        .slice(1)
+        .map(m => `${m.role === "user" ? "USER" : "AI"}: ${m.content}`)
+        .join("\n\n");
+
+      const prompt = `You are SongForge AI — a world-class Christian lyricist and music producer for Harrison Productions.
+
+${THEOLOGICAL_RULES}
+
+${SOURCE_ANALYSIS_RULES}
+
+${LYRIC_RULES}
+
+${STYLE_TAG_RULES}
+
+CONVERSATION SO FAR:
+${conversationHistory}
+
+The user just confirmed approval of the pre-check. Write the full song now. Do NOT return is_check=true. Return is_check=false and populate title, lyrics, style_tag, backstory, scripture_refs, production_notes, hook_line, and captions.
+
+Return JSON with ALL of these fields (use null for unused ones):
+- is_check: false
+- central_argument, central_tension, load_bearing_images, posture, landing, drift_to_avoid: null
+- is_question: false
+- question_text: null
+- title: string
+- hook_line: string or null
+- lyrics: string
+- style_tag: string
+- backstory: string or null
+- scripture_refs: array of strings or null
+- production_notes: string or null
+- captions: object { instagram, tiktok, facebook, youtube, twitter }`;
+
+      base44.integrations.Core.InvokeLLM({
+        prompt,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            is_check: { type: "boolean" },
+            central_argument: { type: "string" },
+            central_tension: { type: "string" },
+            load_bearing_images: { type: "array", items: { type: "string" } },
+            posture: { type: "string" },
+            landing: { type: "string" },
+            drift_to_avoid: { type: "string" },
+            is_question: { type: "boolean" },
+            question_text: { type: "string" },
+            title: { type: "string" },
+            hook_line: { type: "string" },
+            lyrics: { type: "string" },
+            style_tag: { type: "string" },
+            backstory: { type: "string" },
+            scripture_refs: { type: "array", items: { type: "string" } },
+            production_notes: { type: "string" },
+            captions: {
+              type: "object",
+              properties: {
+                instagram: { type: "string" },
+                tiktok: { type: "string" },
+                facebook: { type: "string" },
+                youtube: { type: "string" },
+                twitter: { type: "string" },
+              }
+            },
+          }
+        }
+      }).then(res => {
+        if (res.title && res.lyrics) {
+          setMessages(prev => [...prev, { role: "assistant", content: `Built "${res.title}" — see the output below. Copy each block directly into Suno.` }]);
+          setResult(res);
+          setSaved(false);
+          setMobileTab("output");
+        }
+        setLoading(false);
+      });
+    }, 0);
   };
 
   const restart = () => {
@@ -299,6 +392,18 @@ Return JSON with ALL of these fields (use null for unused ones):
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Build confirm button */}
+          {showBuildConfirm && !loading && (
+            <div className="px-4 pb-3 flex justify-end">
+              <button
+                onClick={() => sendDirect("Looks good — build it!")}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold transition-all shadow-lg shadow-purple-900/30"
+              >
+                <Sparkles className="w-4 h-4" /> Looks good — build it!
+              </button>
             </div>
           )}
 
