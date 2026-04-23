@@ -161,39 +161,8 @@ Return JSON with ALL of these fields (use null for unused ones):
 - production_notes: string or null
 - captions: object { instagram, tiktok, facebook, youtube, twitter } or null`;
 
-    const res = await base44.integrations.Core.InvokeLLM({
+    const res = await base44.functions.invoke('claudeSongBuilder', {
       prompt,
-      response_json_schema: {
-        type: "object",
-        properties: {
-          is_check: { type: "boolean" },
-          central_argument: { type: "string" },
-          central_tension: { type: "string" },
-          load_bearing_images: { type: "array", items: { type: "string" } },
-          posture: { type: "string" },
-          landing: { type: "string" },
-          drift_to_avoid: { type: "string" },
-          is_question: { type: "boolean" },
-          question_text: { type: "string" },
-          title: { type: "string" },
-          hook_line: { type: "string" },
-          lyrics: { type: "string" },
-          style_tag: { type: "string" },
-          backstory: { type: "string" },
-          scripture_refs: { type: "array", items: { type: "string" } },
-          production_notes: { type: "string" },
-          captions: {
-            type: "object",
-            properties: {
-              instagram: { type: "string" },
-              tiktok: { type: "string" },
-              facebook: { type: "string" },
-              youtube: { type: "string" },
-              twitter: { type: "string" },
-            }
-          },
-        }
-      }
     });
 
     if (res.is_check) {
@@ -277,39 +246,8 @@ Return JSON with ALL of these fields (use null for unused ones):
 - production_notes: string or null
 - captions: object { instagram, tiktok, facebook, youtube, twitter }`;
 
-    const res = await base44.integrations.Core.InvokeLLM({
+    const res = await base44.functions.invoke('claudeSongBuilder', {
       prompt,
-      response_json_schema: {
-        type: "object",
-        properties: {
-          is_check: { type: "boolean" },
-          central_argument: { type: "string" },
-          central_tension: { type: "string" },
-          load_bearing_images: { type: "array", items: { type: "string" } },
-          posture: { type: "string" },
-          landing: { type: "string" },
-          drift_to_avoid: { type: "string" },
-          is_question: { type: "boolean" },
-          question_text: { type: "string" },
-          title: { type: "string" },
-          hook_line: { type: "string" },
-          lyrics: { type: "string" },
-          style_tag: { type: "string" },
-          backstory: { type: "string" },
-          scripture_refs: { type: "array", items: { type: "string" } },
-          production_notes: { type: "string" },
-          captions: {
-            type: "object",
-            properties: {
-              instagram: { type: "string" },
-              tiktok: { type: "string" },
-              facebook: { type: "string" },
-              youtube: { type: "string" },
-              twitter: { type: "string" },
-            }
-          },
-        }
-      }
     });
 
     if (res.title && res.lyrics) {
