@@ -274,6 +274,20 @@ Return JSON with ALL of these fields (use null for unused ones):
     toast.success("All blocks copied!");
   };
 
+  const saveToBrain = async () => {
+    if (messages.length === 0) return;
+    const markdown = messages
+      .map(m => `**${m.role === "user" ? "You" : "AI"}:**\n\n${m.content}`)
+      .join("\n\n---\n\n");
+    
+    await base44.entities.Brain.create({
+      title: result?.title || `Chat - ${new Date().toLocaleDateString()}`,
+      content: markdown,
+      source: "chat",
+    });
+    toast.success("Chat saved to Brain!");
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col">
       <header className="border-b border-white/10 px-5 py-3 flex items-center justify-between bg-[#0d0d15] flex-shrink-0">
@@ -297,6 +311,11 @@ Return JSON with ALL of these fields (use null for unused ones):
             <div className="flex items-center gap-1.5 text-xs text-green-400 border border-green-500/30 px-3 py-1.5 rounded-lg bg-green-500/10">
               <Check className="w-3 h-3" /> Saved
             </div>
+          )}
+          {messages.length > 1 && (
+            <Button onClick={saveToBrain} size="sm" className="bg-blue-600 hover:bg-blue-700 border-0 h-8 text-xs">
+              <BookOpen className="w-3.5 h-3.5 mr-1" /> Brain
+            </Button>
           )}
           <button onClick={restart} className="flex items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors px-2 py-1.5 rounded hover:bg-white/5">
             <RotateCcw className="w-3 h-3" /> New Song
