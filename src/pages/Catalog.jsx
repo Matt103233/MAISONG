@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -217,30 +218,35 @@ export default function Catalog() {
             ) : filtered.length === 0 ? (
               <div className="text-center text-white/20 text-xs py-8 px-3">No songs yet.<br />Build one in the Builder.</div>
             ) : (
-              Object.entries(grouped).map(([vol, volSongs]) => (
-                <div key={vol}>
-                  <div className="text-[10px] uppercase tracking-widest text-white/20 px-3 py-2 font-semibold border-b border-white/5">{vol}</div>
-                  {volSongs.map(song => (
-                    <button key={song.id} onClick={() => selectSong(song)}
-                      className={`w-full text-left px-3 py-2.5 border-b border-white/5 transition-all ${selected?.id === song.id ? "bg-white/8 border-l-2 border-l-purple-500" : "hover:bg-white/5"}`}>
-                      <div className="text-sm font-medium text-white truncate">{song.title}</div>
-                      <div className="mt-0.5">
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded border ${STATUS_COLORS[song.status || "draft"]}`}>{song.status || "draft"}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+              Object.entries(grouped).map(([vol, volSongs], volIdx) => (
+                <motion.div key={vol} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: volIdx * 0.1 }}>
+                  <div className="text-[10px] uppercase tracking-widest text-white/20 px-3 py-3 font-semibold border-b border-white/5">{vol}</div>
+                  <AnimatePresence>
+                    {volSongs.map((song, songIdx) => (
+                      <motion.button key={song.id} onClick={() => selectSong(song)}
+                        initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
+                        transition={{ delay: volIdx * 0.1 + songIdx * 0.05 }}
+                        className={`w-full text-left px-3 py-3 border-b border-white/5 transition-all group ${selected?.id === song.id ? "bg-white/8 border-l-2 border-l-purple-500" : "hover:bg-white/5"}`}>
+                        <div className="text-sm font-medium text-white truncate group-hover:text-purple-300 transition-colors">{song.title}</div>
+                        <div className="mt-1">
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded border ${STATUS_COLORS[song.status || "draft"]}`}>{song.status || "draft"}</span>
+                        </div>
+                      </motion.button>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
               ))
             )}
           </div>
         </div>
 
         {/* Editor */}
-        {local ? (
-          <div className="flex-1 overflow-y-auto flex flex-col">
+        <AnimatePresence mode="wait">
+          {local ? (
+            <motion.div key={local.id} className="flex-1 overflow-y-auto flex flex-col" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.2 }}>
             {/* Song header */}
-            <div className="px-6 pt-5 pb-3 border-b border-white/10 bg-[#0d0d15] flex-shrink-0">
-              <div className="flex items-start justify-between gap-4 mb-3">
+            <motion.div className="px-6 pt-6 pb-4 border-b border-white/10 bg-[#0d0d15] flex-shrink-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+              <div className="flex items-start justify-between gap-4 mb-4">
                 <div className="flex-1 min-w-0">
                   <Input value={local.title || ""} onChange={e => updateLocal("title", e.target.value)}
                     className="text-xl font-bold bg-transparent border-transparent hover:border-white/10 focus-visible:border-white/20 text-white px-0 h-auto py-1 mb-1" />
@@ -276,7 +282,7 @@ export default function Catalog() {
               </div>
 
               {/* Tabs */}
-              <div className="flex gap-0.5 mt-3 -mb-3">
+              <div className="flex gap-0.5 mt-4 -mb-3">
                 {TABS.map(t => (
                   <button key={t} onClick={() => setActiveTab(t)}
                     className={`px-3 py-1.5 text-xs font-medium capitalize transition-all ${activeTab === t ? "text-white border-b-2 border-purple-400" : "text-white/30 hover:text-white/60"}`}>
@@ -284,17 +290,19 @@ export default function Catalog() {
                   </button>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
             {/* Tab content */}
-            <div className="flex-1 p-6 space-y-4">
+            <motion.div className="flex-1 p-8 space-y-6 overflow-y-auto" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
 
               {activeTab === "lyrics" && (
-                <CopyBox label="Block 1 — Lyrics" content={local.lyrics_block || ""} editable onChange={v => updateLocal("lyrics_block", v)} rows={24} />
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+                  <CopyBox label="Block 1 — Lyrics" content={local.lyrics_block || ""} editable onChange={v => updateLocal("lyrics_block", v)} rows={24} />
+                </motion.div>
               )}
 
               {activeTab === "style" && (
-                <>
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="space-y-6">
                   <CopyBox label={`Block 2 — Style Tag (${(local.style_tag || "").length}/950 chars)`}
                     content={local.style_tag || ""} editable mono onChange={v => updateLocal("style_tag", v)} rows={5} />
                   <div className="border border-white/10 rounded-xl overflow-hidden">
@@ -314,11 +322,11 @@ export default function Catalog() {
                       </div>
                     </div>
                   </div>
-                </>
+                </motion.div>
               )}
 
               {activeTab === "captions" && (
-                <>
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="space-y-6">
                   <div className="flex gap-2 flex-wrap">
                     {CAPTION_PLATFORMS.map(p => (
                       <button key={p.id} onClick={() => setActiveCaption(p.id)}
@@ -339,11 +347,11 @@ export default function Catalog() {
                       <p className="text-xs text-white/25 mt-1 px-1">{p.note}</p>
                     </div>
                   ))}
-                </>
+                </motion.div>
               )}
 
               {activeTab === "meta" && (
-                <div className="space-y-4">
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="space-y-6">
                   {[
                     { field: "hook_line", label: "Hook Line", rows: 1 },
                     { field: "backstory", label: "Backstory", rows: 4 },
@@ -361,11 +369,11 @@ export default function Catalog() {
                     </button>
                     <span className="text-sm text-white/50">Jesus named directly in lyrics</span>
                   </div>
-                </div>
+                </motion.div>
               )}
 
               {activeTab === "versions" && (
-                <div>
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
                   <div className="mb-6">
                     <h3 className="text-sm font-semibold text-white/50 mb-3">Save current state as a version</h3>
                     <div className="flex gap-2">
@@ -380,16 +388,17 @@ export default function Catalog() {
                     </div>
                   </div>
                   <SongVersionHistory songId={local.id} onRestore={restoreVersion} />
-                </div>
+                </motion.div>
               )}
-            </div>
-          </div>
-        ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-white/20 gap-4">
-            <Music className="w-16 h-16 opacity-20" />
-            <p>Select a song or build a new one</p>
-          </div>
-        )}
+            </motion.div>
+            </motion.div>
+          ) : (
+            <motion.div className="flex-1 flex flex-col items-center justify-center text-white/20 gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+              <Music className="w-16 h-16 opacity-20" />
+              <p>Select a song or build a new one</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {showPasteModal && <PasteSaveModal onClose={() => setShowPasteModal(false)} onSaved={(song) => { setSongs(prev => [song, ...prev]); selectSong(song); setShowPasteModal(false); }} />}
