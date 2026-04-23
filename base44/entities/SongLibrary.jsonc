@@ -1,0 +1,83 @@
+{
+  "name": "SongLibrary",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "lyrics": {
+      "type": "string"
+    },
+    "style_tag": {
+      "type": "string"
+    },
+    "style_prompts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "captions": {
+      "type": "object",
+      "properties": {
+        "instagram": {
+          "type": "string"
+        },
+        "tiktok": {
+          "type": "string"
+        },
+        "facebook": {
+          "type": "string"
+        },
+        "youtube": {
+          "type": "string"
+        },
+        "twitter": {
+          "type": "string"
+        }
+      }
+    },
+    "hook_line": {
+      "type": "string"
+    },
+    "backstory": {
+      "type": "string"
+    },
+    "production_notes": {
+      "type": "string"
+    },
+    "scripture": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_app": {
+      "type": "string",
+      "enum": [
+        "mAIsong.ai",
+        "harrison_productions",
+        "brain_app"
+      ]
+    },
+    "source_app_id": {
+      "type": "string"
+    },
+    "original_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "complete",
+        "exported",
+        "published"
+      ],
+      "default": "draft"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

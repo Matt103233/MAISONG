@@ -11,6 +11,7 @@ import Builder from "./pages/Builder";
 import Catalog from "./pages/Catalog";
 import Journal from "./pages/Journal";
 import Prompt from "./pages/Prompt";
+import AdminLibrary from "./pages/AdminLibrary";
 
 
 const AuthenticatedApp = () => {
@@ -40,6 +41,7 @@ const AuthenticatedApp = () => {
       <Route path="/catalog" element={<Catalog />} />
       <Route path="/journal" element={<Journal />} />
       <Route path="/prompt" element={<Prompt />} />
+      <Route path="/admin/library" element={<AdminLibrary />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
