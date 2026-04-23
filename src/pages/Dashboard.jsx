@@ -51,10 +51,10 @@ export default function Dashboard() {
         </nav>
       </header>
 
-      <main className="max-w-2xl mx-auto px-5 py-8 space-y-8">
+      <main className="max-w-7xl mx-auto px-8 py-10 space-y-10">
 
         {/* Stats — gauge style */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-4 gap-8">
           {[
             { label: "Total Songs", value: stats.total },
             { label: "Complete", value: stats.complete },
@@ -81,80 +81,82 @@ export default function Dashboard() {
         </div>
 
         {/* Nav Cards */}
-        <div className="space-y-3">
-          {/* Song Builder — wide */}
+        <div className="grid grid-cols-2 gap-6">
+          {/* Song Builder */}
           <Link to="/builder">
-            <div className="rounded-2xl p-6 border border-amber-700/30 hover:border-amber-500/50 transition-all group relative overflow-hidden"
+            <div className="rounded-2xl p-8 border border-amber-700/30 hover:border-amber-500/50 transition-all group relative overflow-hidden"
               style={{ background: "linear-gradient(135deg, #2a1a6e 0%, #6b3a10 60%, #8a5010 100%)" }}>
-              <div className="flex items-center justify-between mb-4">
-                <Sparkles className="w-6 h-6 text-purple-400" />
-                <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-white/70 transition-colors" />
+              <div className="flex items-center justify-between mb-6">
+                <Sparkles className="w-8 h-8 text-purple-400" />
+                <ArrowRight className="w-5 h-5 text-white/30 group-hover:text-white/70 transition-colors" />
               </div>
-              <h3 className="font-bold text-xl mb-1 text-white">Song Builder</h3>
-              <p className="text-white/60 text-sm">Build a new song — 4-step AI wizard</p>
+              <h3 className="font-bold text-2xl mb-2 text-white">Song Builder</h3>
+              <p className="text-white/60 text-base">Build a new song — 4-step AI wizard</p>
             </div>
           </Link>
 
-          {/* My Catalog — wide */}
+          {/* My Catalog */}
           <Link to="/catalog">
-            <div className="rounded-2xl p-6 border border-amber-700/30 hover:border-amber-500/50 transition-all group relative overflow-hidden"
+            <div className="rounded-2xl p-8 border border-amber-700/30 hover:border-amber-500/50 transition-all group relative overflow-hidden"
               style={{ background: "linear-gradient(135deg, #1a1208 0%, #7a5010 80%, #a06820 100%)" }}>
-              <div className="flex items-center justify-between mb-4">
-                <Music className="w-6 h-6 text-amber-400" />
-                <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-white/70 transition-colors" />
+              <div className="flex items-center justify-between mb-6">
+                <Music className="w-8 h-8 text-amber-400" />
+                <ArrowRight className="w-5 h-5 text-white/30 group-hover:text-white/70 transition-colors" />
               </div>
-              <h3 className="font-bold text-xl mb-1 text-white">My Catalog</h3>
-              <p className="text-white/60 text-sm">Workshop your songs, copy blocks, versions</p>
+              <h3 className="font-bold text-2xl mb-2 text-white">My Catalog</h3>
+              <p className="text-white/60 text-base">Workshop your songs, copy blocks, versions</p>
             </div>
           </Link>
 
-          {/* Journal + System Prompt side by side */}
-          <div className="grid grid-cols-2 gap-3">
-            <Link to="/journal">
-              <div className="rounded-2xl p-5 border border-green-800/30 hover:border-green-600/50 transition-all group h-full"
-                style={{ background: "linear-gradient(135deg, #0d2a18 0%, #1a4a28 100%)" }}>
-                <div className="flex items-center justify-between mb-4">
-                  <BookOpen className="w-6 h-6 text-green-400" />
-                  <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-white/70 transition-colors" />
-                </div>
-                <h3 className="font-bold text-lg mb-1 text-white">Journal</h3>
-                <p className="text-white/60 text-sm leading-snug">Extract song seeds from raw journal entries</p>
+          {/* Journal */}
+          <Link to="/journal">
+            <div className="rounded-2xl p-8 border border-green-800/30 hover:border-green-600/50 transition-all group"
+              style={{ background: "linear-gradient(135deg, #0d2a18 0%, #1a4a28 100%)" }}>
+              <div className="flex items-center justify-between mb-6">
+                <BookOpen className="w-8 h-8 text-green-400" />
+                <ArrowRight className="w-5 h-5 text-white/30 group-hover:text-white/70 transition-colors" />
               </div>
-            </Link>
-            <Link to="/prompt">
-              <div className="rounded-2xl p-5 border border-blue-800/30 hover:border-blue-600/50 transition-all group h-full"
-                style={{ background: "linear-gradient(135deg, #0d1a2a 0%, #1a2a4a 100%)" }}>
-                <div className="flex items-center justify-between mb-4">
-                  <FileText className="w-6 h-6 text-blue-400" />
-                  <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-white/70 transition-colors" />
-                </div>
-                <h3 className="font-bold text-lg mb-1 text-white">System Prompt</h3>
-                <p className="text-white/60 text-sm leading-snug">Export your portable rules for outside AI sessions</p>
+              <h3 className="font-bold text-2xl mb-2 text-white">Journal</h3>
+              <p className="text-white/60 text-base">Extract song seeds from raw journal entries</p>
+            </div>
+          </Link>
+
+          {/* System Prompt */}
+          <Link to="/prompt">
+            <div className="rounded-2xl p-8 border border-blue-800/30 hover:border-blue-600/50 transition-all group"
+              style={{ background: "linear-gradient(135deg, #0d1a2a 0%, #1a2a4a 100%)" }}>
+              <div className="flex items-center justify-between mb-6">
+                <FileText className="w-8 h-8 text-blue-400" />
+                <ArrowRight className="w-5 h-5 text-white/30 group-hover:text-white/70 transition-colors" />
               </div>
-            </Link>
-          </div>
+              <h3 className="font-bold text-2xl mb-2 text-white">System Prompt</h3>
+              <p className="text-white/60 text-base">Export your portable rules for outside AI sessions</p>
+            </div>
+          </Link>
         </div>
 
         {/* Recent Songs */}
         {recent.length > 0 && (
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-bold text-white flex items-center gap-2">
-                <Clock className="w-4 h-4 text-amber-500/70" /> Recent Songs
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-bold text-xl white flex items-center gap-2">
+                <Clock className="w-5 h-5 text-amber-500/70" /> Recent Songs
               </h2>
               <Link to="/catalog" className="text-sm text-amber-500/70 hover:text-amber-400 transition-colors">View all →</Link>
             </div>
-            <div className="space-y-2">
+            <div className="grid grid-cols-3 gap-4">
               {recent.map(song => (
                 <Link key={song.id} to={`/catalog?song=${song.id}`}>
-                  <div className="rounded-xl px-4 py-3 flex items-center justify-between transition-all border border-amber-900/20 hover:border-amber-700/40"
+                  <div className="rounded-xl p-5 transition-all border border-amber-900/20 hover:border-amber-700/40 h-full flex flex-col"
                     style={{ background: "#1a1208" }}>
-                    <div className="flex items-center gap-3">
-                      <Music className="w-4 h-4 text-amber-600/60" />
-                      <span className="text-sm font-medium text-white/90">{song.title}</span>
-                      {song.volume && <span className="text-xs text-white/30">{song.volume}</span>}
+                    <div className="flex items-start gap-3 mb-3">
+                      <Music className="w-5 h-5 text-amber-600/60 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-base font-semibold text-white truncate">{song.title}</h4>
+                        {song.volume && <p className="text-xs text-white/40 mt-0.5">{song.volume}</p>}
+                      </div>
                     </div>
-                    <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-medium ${STATUS_BADGE[song.status || "draft"]}`}>
+                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium w-fit ${STATUS_BADGE[song.status || "draft"]}`}>
                       {song.status || "draft"}
                     </span>
                   </div>
