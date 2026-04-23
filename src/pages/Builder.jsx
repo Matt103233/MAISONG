@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -71,6 +71,7 @@ const QUICK_PROMPTS = [
 ];
 
 export default function Builder() {
+  const location = useLocation();
   const [messages, setMessages] = useState([
     { role: "assistant", content: "What's on your heart? Tell me the theme, a story, or paste a journal entry — I'll build a complete song with lyrics, Suno style tag, and captions." }
   ]);
@@ -90,7 +91,14 @@ export default function Builder() {
 
   useEffect(() => {
     base44.entities.StylePrompt.list("name", 100).then(data => setStylePrompts(data));
-  }, []);
+    // If coming from journal with seed data, populate the input
+    if (location.state?.seedTheme) {
+      const seedText = location.state.seedHook 
+        ? `${location.state.seedTheme}\n\nHook idea: "${location.state.seedHook}"`
+        : location.state.seedTheme;
+      setInput(seedText);
+    }
+  }, [location]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
