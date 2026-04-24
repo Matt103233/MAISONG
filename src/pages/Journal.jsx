@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { ArrowLeft, BookOpen, Sparkles, Upload, Plus, Loader2, X, ArrowRight, Mu
 import { toast } from "sonner";
 
 export default function Journal() {
+  const navigate = useNavigate();
   const [entries, setEntries] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,6 +19,7 @@ export default function Journal() {
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
   const [seeds, setSeeds] = useState([]);
+  const [sendingEmail, setSendingEmail] = useState(null);
 
   useEffect(() => {
     base44.entities.JournalEntry.list("-created_date", 100).then(data => {
@@ -111,6 +113,24 @@ Journal entry:
     toast.success(`Extracted ${res.seeds?.length || 0} song seeds!`);
   };
 
+  const buildAndEmail = async (seed) => {
+    setSendingEmail(seed.theme);
+    const user = await base44.auth.me();
+    const seedContent = seed.hook_idea 
+      ? `${seed.theme}\n\nHook: "${seed.hook_idea}"\nMood: ${seed.mood}\nScripture hint: ${seed.scripture_hint}`
+      : `${seed.theme}\n\nMood: ${seed.mood}\nScripture hint: ${seed.scripture_hint}`;
+    
+    await base44.integrations.Core.SendEmail({
+      to: user.email,
+      subject: `Song Seed: ${seed.hook_idea || seed.theme}`,
+      body: `Song seed from: ${selected.title}\n\n${seedContent}`,
+    });
+    
+    setSendingEmail(null);
+    navigate("/builder", { state: { seedTheme: seed.theme, seedHook: seed.hook_idea } });
+    toast.success("Seed emailed and Builder opened!");
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col">
       <header className="border-b border-white/10 px-5 py-3 flex items-center justify-between bg-[#0d0d15]">
@@ -197,11 +217,15 @@ Journal entry:
                             <p className="text-white/90 text-sm font-medium mb-1">{seed.theme}</p>
                             {seed.hook_idea && <p className="text-amber-300/70 italic text-sm">"{seed.hook_idea}"</p>}
                           </div>
-                          <Link to={`/builder`} state={{ seedTheme: seed.theme, seedHook: seed.hook_idea }}>
-                            <Button size="sm" className="bg-purple-600 hover:bg-purple-700 border-0 flex-shrink-0 h-8 text-xs">
-                              Build <ArrowRight className="w-3 h-3 ml-1" />
-                            </Button>
-                          </Link>
+                          <Button 
+                            onClick={() => buildAndEmail(seed)} 
+                            disabled={sendingEmail === seed.theme}
+                            size="sm" 
+                            className="bg-purple-600 hover:bg-purple-700 border-0 flex-shrink-0 h-8 text-xs"
+                          >
+                            {sendingEmail === seed.theme ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : null}
+                            Build <ArrowRight className="w-3 h-3 ml-1" />
+                          </Button>
                         </div>
                         <div className="flex gap-2 flex-wrap">
                           {seed.mood && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-300/70 border border-blue-500/20">{seed.mood}</span>}
