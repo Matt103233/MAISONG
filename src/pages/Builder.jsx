@@ -358,11 +358,11 @@ Return JSON with ALL of these fields (use null for unused ones):
           {/* Quick Prompts */}
           {messages.length === 1 && (
             <div className="px-3 pb-3 space-y-2">
-              <p className="text-[10px] text-white/25 uppercase tracking-wider font-semibold">Quick starts</p>
+              <p className="text-[10px] text-white/50 uppercase tracking-wider font-semibold">Quick starts</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {QUICK_PROMPTS.map(p => (
                   <button key={p} onClick={() => setInput(p)}
-                    className="text-left text-xs sm:text-sm text-white/40 hover:text-white/70 px-3 py-2.5 sm:py-2 rounded-lg border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all">
+                    className="text-left text-xs sm:text-sm text-white/70 hover:text-white px-3 py-2.5 sm:py-2 rounded-lg border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all">
                     {p}
                   </button>
                 ))}
