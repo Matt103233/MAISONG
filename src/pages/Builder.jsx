@@ -338,7 +338,7 @@ Return JSON with ALL of these fields (use null for unused ones):
 
       <div className="flex flex-row flex-1 overflow-hidden">
         {/* Chat Panel */}
-        <div className={`flex-col w-full max-w-xl border-r border-white/10 flex-shrink-0 ${mobileTab === "chat" ? "flex" : "hidden lg:flex"}`}>
+        <div className={`flex-col w-full max-w-xl border-r border-white/10 flex-shrink-0 flex-1 ${mobileTab === "chat" ? "flex" : "hidden lg:flex"}`}>
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-5 space-y-5 min-h-0">
             {messages.map((msg, i) => <ChatMessage key={i} msg={msg} />)}
