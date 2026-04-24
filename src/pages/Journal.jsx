@@ -109,8 +109,20 @@ Journal entry:
     await base44.entities.JournalEntry.update(selected.id, {
       extracted_themes: (res.seeds || []).map(s => s.theme),
     });
+    
+    // Format seeds as markdown and send email
+    const seedsMd = `# Song Seeds from: ${selected.title}\n\nExtracted: ${new Date().toLocaleDateString()}\n\n${(res.seeds || []).map((seed, i) => 
+      `## Seed ${i + 1}\n\n**Theme:** ${seed.theme}\n\n**Hook:** ${seed.hook_idea || "—"}\n\n**Mood:** ${seed.mood}\n\n**Scripture Hint:** ${seed.scripture_hint}\n`
+    ).join("---\n\n")}`;
+    
+    await base44.integrations.Core.SendEmail({
+      to: "gsueaglefan@gmail.com",
+      subject: `Song Seeds: ${selected.title}`,
+      body: seedsMd,
+    });
+    
     setExtracting(false);
-    toast.success(`Extracted ${res.seeds?.length || 0} song seeds!`);
+    toast.success(`Extracted ${res.seeds?.length || 0} song seeds and emailed!`);
   };
 
   const buildAndEmail = async (seed) => {
