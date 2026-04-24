@@ -91,6 +91,9 @@ export default function Builder() {
 
   useEffect(() => {
     base44.entities.StylePrompt.list("name", 100).then(data => setStylePrompts(data));
+  }, []);
+
+  useEffect(() => {
     // If coming from journal with seed data, populate the input
     if (location.state?.seedTheme) {
       const seedText = location.state.seedHook 
@@ -98,7 +101,7 @@ export default function Builder() {
         : location.state.seedTheme;
       setInput(seedText);
     }
-  }, [location]);
+  }, [location.pathname]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
