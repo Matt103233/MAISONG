@@ -290,35 +290,36 @@ Return JSON with ALL of these fields (use null for unused ones):
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col">
-      <header className="border-b border-white/10 px-5 py-3 flex items-center justify-between bg-[#0d0d15] flex-shrink-0">
-        <div className="flex items-center gap-3">
+      <header className="border-b border-white/10 px-3 py-2.5 flex items-center justify-between bg-[#0d0d15] flex-shrink-0">
+        <div className="flex items-center gap-2">
           <Link to="/">
             <Button variant="ghost" size="sm" className="text-white/40 hover:text-white h-8 px-2">
-              <ArrowLeft className="w-4 h-4 mr-1" /> Dashboard
+              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline ml-1">Dashboard</span>
             </Button>
           </Link>
           <div className="w-px h-5 bg-white/10" />
           <Sparkles className="w-4 h-4 text-purple-400" />
-          <span className="font-bold">Song Builder</span>
+          <span className="font-bold text-sm">Song Builder</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {result && !saved && (
-            <Button onClick={saveSong} disabled={saving} size="sm" className="bg-purple-600 hover:bg-purple-700 border-0 h-8 text-xs">
-              <Save className="w-3.5 h-3.5 mr-1" />{saving ? "Saving..." : "Save to Catalog"}
+            <Button onClick={saveSong} disabled={saving} size="sm" className="bg-purple-600 hover:bg-purple-700 border-0 h-8 text-xs px-2.5">
+              <Save className="w-3.5 h-3.5" /><span className="hidden sm:inline ml-1">{saving ? "Saving..." : "Save"}</span>
             </Button>
           )}
           {saved && (
-            <div className="flex items-center gap-1.5 text-xs text-green-400 border border-green-500/30 px-3 py-1.5 rounded-lg bg-green-500/10">
-              <Check className="w-3 h-3" /> Saved
+            <div className="flex items-center gap-1 text-xs text-green-400 border border-green-500/30 px-2 py-1.5 rounded-lg bg-green-500/10">
+              <Check className="w-3 h-3" />
             </div>
           )}
           {messages.length > 1 && (
-            <Button onClick={saveToBrain} size="sm" className="bg-blue-600 hover:bg-blue-700 border-0 h-8 text-xs">
-              <BookOpen className="w-3.5 h-3.5 mr-1" /> Brain
+            <Button onClick={saveToBrain} size="sm" className="bg-blue-600 hover:bg-blue-700 border-0 h-8 text-xs px-2.5">
+              <BookOpen className="w-3.5 h-3.5" />
             </Button>
           )}
-          <button onClick={restart} className="flex items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors px-2 py-1.5 rounded hover:bg-white/5">
-            <RotateCcw className="w-3 h-3" /> New Song
+          <button onClick={restart} className="flex items-center gap-1 text-xs text-white/30 hover:text-white/60 transition-colors px-2 py-1.5 rounded hover:bg-white/5">
+            <RotateCcw className="w-3 h-3" />
           </button>
         </div>
       </header>
@@ -414,17 +415,17 @@ Return JSON with ALL of these fields (use null for unused ones):
           )}
 
           {/* Input */}
-          <div className="p-4 border-t border-white/10 bg-[#0d0d15]">
+          <div className="p-3 pb-safe border-t border-white/10 bg-[#0d0d15]" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
             <div className="flex gap-2">
               <Textarea
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
-                placeholder="Tap to type or paste a journal entry, prayer, or idea..."
-                className="bg-white/5 border border-white/20 text-white placeholder:text-white/35 text-sm min-h-[72px] max-h-[180px] resize-none focus-visible:border-purple-500/50"
+                placeholder="Type or paste a journal entry, prayer, or idea..."
+                className="bg-white/5 border border-white/20 text-white placeholder:text-white/35 text-sm min-h-[60px] max-h-[140px] resize-none focus-visible:border-purple-500/50"
               />
               <Button onClick={send} disabled={!input.trim() || loading}
-                className="bg-purple-600 hover:bg-purple-700 border-0 h-auto px-4 self-stretch">
+                className="bg-purple-600 hover:bg-purple-700 border-0 h-auto px-3 self-stretch">
                 <Send className="w-4 h-4" />
               </Button>
             </div>
