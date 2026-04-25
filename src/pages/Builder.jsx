@@ -174,9 +174,10 @@ Return JSON with ALL of these fields (use null for unused ones):
 - production_notes: string or null
 - captions: object { instagram, tiktok, facebook, youtube, twitter } or null`;
 
-    const res = await base44.functions.invoke('claudeSongBuilder', {
+    const raw = await base44.functions.invoke('claudeSongBuilder', {
       prompt,
     });
+    const res = raw?.data ?? raw;
 
     if (res.is_check) {
       const checkText = `Before I write, let me confirm I'm capturing the heart of this text:\n\n📌 **Central argument:** ${res.central_argument}\n\n⚡ **Central tension:** ${res.central_tension}\n\n🖼 **Load-bearing images:** ${(res.load_bearing_images || []).map((img, i) => `${i+1}. ${img}`).join(" · ")}\n\n🧭 **Posture:** ${res.posture}\n\n🏁 **Where it lands:** ${res.landing}\n\n⚠️ **What this song must NOT become:** ${res.drift_to_avoid}`;
@@ -259,9 +260,10 @@ Return JSON with ALL of these fields (use null for unused ones):
 - production_notes: string or null
 - captions: object { instagram, tiktok, facebook, youtube, twitter }`;
 
-    const res = await base44.functions.invoke('claudeSongBuilder', {
+    const raw2 = await base44.functions.invoke('claudeSongBuilder', {
       prompt,
     });
+    const res = raw2?.data ?? raw2;
 
     if (res.title && res.lyrics) {
       setMessages(prev => [...prev, { role: "assistant", content: `Built "${res.title}" — see the output below. Copy each block directly into Suno.` }]);
