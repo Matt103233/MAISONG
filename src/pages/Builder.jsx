@@ -72,8 +72,16 @@ const QUICK_PROMPTS = [
 
 export default function Builder() {
   const location = useLocation();
+  const getInitialMessage = (state) => {
+    if (state?.seedTheme) {
+      const hook = state.seedHook ? ` Hook idea: "${state.seedHook}"` : "";
+      return `Got it — building from your journal seed now.\n\nTheme: ${state.seedTheme}${hook}\n\nType "build it" to go straight to lyrics, or add any direction first.`;
+    }
+    return "Ready to build. Give me a theme, idea, or paste text — I'll generate full lyrics, style tag, and captions.";
+  };
+
   const [messages, setMessages] = useState([
-    { role: "assistant", content: "What's on your heart? Tell me the theme, a story, or paste a journal entry — I'll build a complete song with lyrics, Suno style tag, and captions." }
+    { role: "assistant", content: getInitialMessage(location.state) }
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -100,8 +108,10 @@ export default function Builder() {
         ? `${location.state.seedTheme}\n\nHook idea: "${location.state.seedHook}"`
         : location.state.seedTheme;
       setInput(seedText);
+      // Update the greeting to reflect the seed
+      setMessages([{ role: "assistant", content: getInitialMessage(location.state) }]);
     }
-  }, [location.pathname]);
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -264,7 +274,7 @@ Return JSON with ALL of these fields (use null for unused ones):
   };
 
   const restart = () => {
-    setMessages([{ role: "assistant", content: "What's on your heart? Tell me the theme, a story, or paste a journal entry — I'll build a complete song with lyrics, Suno style tag, and captions." }]);
+    setMessages([{ role: "assistant", content: "Ready to build. Give me a theme, idea, or paste text — I'll generate full lyrics, style tag, and captions." }]);
     setResult(null);
     setSaved(false);
     setInput("");
@@ -292,7 +302,7 @@ Return JSON with ALL of these fields (use null for unused ones):
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col">
+    <div className="h-screen bg-[#0a0a0f] text-white flex flex-col overflow-hidden">
       <header className="border-b border-white/10 px-3 py-2.5 flex items-center justify-between bg-[#0d0d15] flex-shrink-0">
         <div className="flex items-center gap-2">
           <Link to="/">
@@ -339,9 +349,9 @@ Return JSON with ALL of these fields (use null for unused ones):
         </button>
       </div>
 
-      <div className="flex flex-row flex-1 overflow-hidden">
+      <div className="flex flex-row flex-1 overflow-hidden min-h-0">
         {/* Chat Panel */}
-        <div className={`flex-col w-full max-w-xl border-r border-white/10 flex-shrink-0 flex-1 ${mobileTab === "chat" ? "flex" : "hidden lg:flex"}`}>
+        <div className={`flex-col w-full max-w-xl border-r border-white/10 flex-shrink-0 flex-1 min-h-0 ${mobileTab === "chat" ? "flex" : "hidden lg:flex"}`}>
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-5 space-y-5 min-h-0">
             {messages.map((msg, i) => <ChatMessage key={i} msg={msg} />)}
@@ -358,8 +368,8 @@ Return JSON with ALL of these fields (use null for unused ones):
             <div ref={bottomRef} />
           </div>
 
-          {/* Quick Prompts */}
-          {messages.length === 1 && (
+          {/* Quick Prompts — only show when no seed from journal */}
+          {messages.length === 1 && !location.state?.seedTheme && (
             <div className="px-3 pb-3 space-y-2">
               <p className="text-[10px] text-white/50 uppercase tracking-wider font-semibold">Quick starts</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
