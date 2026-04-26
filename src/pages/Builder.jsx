@@ -204,7 +204,6 @@ Return JSON with ALL of these fields (use null for unused ones):
       setMessages(prev => [...prev, { role: "assistant", content: `Built "${res.title}" — see the output below. Copy each block directly into Suno.` }]);
       setResult(res);
       setSaved(false);
-      setMobileTab("output");
       saveSong(res);
     }
     setLoading(false);
@@ -282,7 +281,6 @@ Return JSON with ALL of these fields (use null for unused ones):
       setMessages(prev => [...prev, { role: "assistant", content: `Built "${res.title}" — see the output below. Copy each block directly into Suno.` }]);
       setResult(res);
       setSaved(false);
-      setMobileTab("output");
       saveSong(res);
     }
     setLoading(false);
