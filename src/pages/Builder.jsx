@@ -72,6 +72,19 @@ const QUICK_PROMPTS = [
 
 export default function Builder() {
   const location = useLocation();
+  const [journals, setJournals] = useState([]);
+  
+  useEffect(() => {
+    base44.entities.JournalEntry.list("-created_date", 100).then(setJournals);
+  }, []);
+
+  const loadJournal = (journal) => {
+    const text = journal.content || journal.title;
+    setInput(text);
+    setMessages([{ role: "assistant", content: getInitialMessage({ seedTheme: journal.title }) }]);
+    toast.success(`Loaded: ${journal.title}`);
+  };
+
   const getInitialMessage = (state) => {
     if (state?.seedTheme) {
       const hook = state.seedHook ? ` Hook idea: "${state.seedHook}"` : "";
@@ -370,9 +383,25 @@ Return JSON with ALL of these fields (use null for unused ones):
             <div ref={bottomRef} />
           </div>
 
+          {/* Journals quick load */}
+          {journals.length > 0 && messages.length === 1 && !location.state?.seedTheme && (
+            <div className="px-3 pb-2 border-t border-white/10">
+              <p className="text-[10px] text-white/25 uppercase tracking-wider font-semibold mb-1.5 px-1">Load Journal</p>
+              <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+                {journals.slice(0, 10).map(j => (
+                  <button key={j.id} onClick={() => loadJournal(j)}
+                    className="flex-shrink-0 text-left text-xs text-white/70 hover:text-white px-2.5 py-1.5 rounded-lg border border-white/10 hover:border-green-500/30 hover:bg-green-500/5 transition-all max-w-[120px] truncate">
+                    {j.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Quick Prompts — only show when no seed from journal */}
           {messages.length === 1 && !location.state?.seedTheme && (
             <div className="px-3 pb-2">
+              <p className="text-[10px] text-white/25 uppercase tracking-wider font-semibold mb-1.5 px-1">Quick Start</p>
               <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
                 {QUICK_PROMPTS.map(p => (
                   <button key={p} onClick={() => setInput(p)}
