@@ -71,6 +71,56 @@ STYLE TAG RULES (Block 2 — Suno):
 - Comma-separated SHORT tags only (1-3 words each, max 950 chars, NO full sentences)
 - Order: genre → mood/energy → vocal direction → key instruments → production aesthetic → exact BPM → negative prompts last
 - Example: "cinematic gospel soul, confessional, weathered raspy baritone, fingerpicked acoustic, cello undertone, brushed snare, warm analog, intimate, 72 BPM, no autotune, no electronic drums"
+
+STYLE TAG VOCABULARY REFERENCE — use these exact terms in style tags:
+
+TEMPO & RHYTHM:
+- BPM numbers (e.g. "60 BPM", "72 BPM", "84 BPM", "100 BPM") — 60=slow/reflective, 72=moderate, 84=groove, 100+=driving
+- "fingerpicked" = acoustic guitar, individual notes plucked
+- "strumming" = chordal, rhythmic movement
+- "brushed snare" = light percussion, texture without dominating
+- "groove" = locked pocket, rhythmic feel you can move to
+- "walking pace" = steady, measured, forward motion without urgency
+- "shuffle" = swing feel, slight triplet pocket
+
+VOCAL TEXTURE:
+- "warm tenor" = inviting, story-like, intimate
+- "gravel tone" = worn, lived-in, honest
+- "talk-sung" = conversational, nearly spoken
+- "nearly alone" = voice forward in mix, minimal backing
+- "full band supporting" = voice is lead but surrounded by arrangement
+
+INSTRUMENTATION ENTRY/EXIT:
+- "sparse intro" = one or two instruments only
+- "builds across verse" = layers added with each section
+- "swells" = gradual volume and texture increase
+- "bridge erupts" = sudden energy jump, full arrangement arrives
+- "strip back to piano and voice" = reduction for intimacy in outro
+- "everything enters final chorus" = full sonic commitment at end
+
+HARMONIC/STRUCTURAL MOVEMENT:
+- "tension in verses releasing into chorus" = setup and payoff
+- "no false resolution" = stays honest, doesn't fake uplift
+- "earned crescendo" = build feels justified by lyric/emotional arc
+- "cinematic break" = instrumental solo that moves the story forward
+- "triumphant but not triumphalist" = powerful without being cheap
+
+GENRE DNA:
+- "americana" = folk roots, US storytelling
+- "cinematic indie folk" = visual, emotional, production space
+- "gospel R&B" = soul pocket, church atmosphere
+- "confessional" = vulnerable, honest, interior
+- "outlaw country" = grit, no polish, authenticity priority
+- "stax memphis soul" = 60s soulful groove
+- "CCM pop rock" = Christian contemporary, anthem hooks
+
+DYNAMICS & ENERGY FLOW:
+- "low register throughout" = stays grounded, never leaves lower frequencies
+- "energy drop" = sudden reduction in sonic density
+- "breathing room" = intentional silence, space between phrases
+- "stop-go moments" = starts and stops to break monotony
+- "sustained" = holds a note or texture longer than expected
+- "staccato" = short, clipped, bouncy
 `.trim();
 
 // ─── Style Palette ───────────────────────────────────────────────────────────
